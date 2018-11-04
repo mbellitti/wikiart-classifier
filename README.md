@@ -1,3 +1,11 @@
+---
+title: A WikiArt Classifier
+author: 
+- Jan Albrecht
+- Matteo Bellitti
+- Mohit Pandey
+---
+
 ###TEST
 Idea is to classify images into different styles (cubism, Impressionism, etc )
 
