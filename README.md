@@ -1,48 +1,72 @@
----
-title: A WikiArt Classifier
-author: 
-- Jan Albrecht
-- Matteo Bellitti
-- Mohit Pandey
----
+# A Wikiart Classifier
 
-###TEST
-Idea is to classify images into different styles (cubism, Impressionism, etc )
+**Authors**: Jan Albrecht, Matteo Bellitti, Mohit Pandey
 
-## Welcome to GitHub Pages
+This page is dedicate to the final project for the Fall 2018 class
+[Machine Learning for Physicists](https://physics.bu.edu/~pankajm/PY895-ML.html) held at BU.
 
-You can use the [editor on GitHub](https://github.com/mbellitti/wikiart-classifier/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+# Overview
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+The idea is to classify artworks into different styles , genres (Religious painting, Portrait), and author using Deep Neural Networks.
 
-### Markdown
+This is probably very ambitious. 
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+On this kind of data, in order of increasing data availability, we could
+try to classify:
 
-```markdown
-Syntax highlighted code block
+- Century the artwork was realized
+- Field (Painting, Sculpture, Photography)
+- Genre (Abstract, Landscape, Portrait)
+- Style (Cubism, Impressionism, Dadaism)
+- Author
 
-# Header 1
-## Header 2
-### Header 3
+# Data 
 
-- Bulleted
-- List
+## Data sources
 
-1. Numbered
-2. List
+The source of the images and metadata is
+[WikiArt](https://www.wikiart.org/). The WikiArt project does not
+provide a precompiled dataset, so we will need to build our own by
+scraping the images and the labels we are interested in.
 
-**Bold** and _Italic_ and `Code` text
+At the very least we will need to collect the following features:
 
-[Link](url) and ![Image](src)
-```
+- Image
+- Century
+- Field
+it would also be interesting to deal with
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+- Style
+- Date (difficulty: often approximate and not in standard format)
+- Genre (difficulty: paintings in the same genre can be visually
+  very different)
+- Author 
 
-### Jekyll Themes
+## Preprocessing
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/mbellitti/wikiart-classifier/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+The labels must be properly formatted and deduplicated, but most of
+this work has already been done by the people on WikiArt.
 
-### Support or Contact
+The images will need more preprocessing:
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+- Image resolution should be made homogeneous
+- Pixel values need to be normalized 
+
+## Data Augmentation
+
+Many artists have less than 20 artworks, so if we want to perform
+with acceptable results on the Author classification task we need
+to exploit data augmentation as much as possible.
+
+The situation is less dire for the top 10 Genres, but we still risk
+overfitting. 
+
+# Network Architecture
+
+We are dealing with image data, so we will heavily use
+Convolutional Neural Network, but the detailed network architecture
+has not been defined yet.
+
+# Timeline
+
+There is not an official deadline yet. The official end of Finals is on 2018-21-12.
