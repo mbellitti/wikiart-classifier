@@ -34,6 +34,7 @@ At the very least we will need to collect the following features:
 - Image
 - Century
 - Field
+
 it would also be interesting to deal with
 
 - Style
