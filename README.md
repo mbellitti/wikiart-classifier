@@ -7,7 +7,7 @@ This page is dedicate to the final project for the Fall 2018 class
 
 # Overview
 
-The idea is to classify artworks into different styles , genres (Religious painting, Portrait), and author using Deep Neural Networks.
+The idea is to classify artworks into different styles, genres, and author using Deep Neural Networks.
 
 This is probably very ambitious. 
 
