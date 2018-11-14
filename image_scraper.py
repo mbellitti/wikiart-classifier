@@ -1,14 +1,14 @@
 import requests
 from bs4 import BeautifulSoup
 
-#finds the  html address
-#TODO find better programm structure to include it in crawler 
-#idea: class that takes a url and loads the page. -> methods to get jpg and metadata
+# finds the  html address
+# TODO find better programm structure to include it in crawler 
+# idea: class that takes a url and loads the page. -> methods to get jpg and metadata
 
 def image_html_fn(url):
     """
     input: url of Wikiart page, which has a single image
-    output: web url of the source image
+    output: web url of the source image.
     """
 
     page_trial_wikiart = requests.get(url)
@@ -21,11 +21,14 @@ def image_html_fn(url):
 
     str_list=str(search_image_line[0])
 
-    #used this class because all (?) the webpages seem to have a property that when you take your mouse it zooms in. 
-    #This is how I am trying to find source image
-    #print(search_image_line)
+    # used this class because all (?) the webpages seem to have a property 
+    # that when you take your mouse it zooms in. 
+    # This is how I am trying to find source image
+    # print(search_image_line)
     
-    
+    # I replaced that piece in favor of shorter version below.
+    # I think, they are equivlent under the assumption that there is only one
+    # picture on the site. 
     """
     temp_var=[]
     for i in range(len(str_list)):
@@ -43,62 +46,75 @@ def image_html_fn(url):
     return ''.join(temp_var)
     """
     
-    marker_idx = str_list.find('src')   #find interesting point in string
-    assert marker_idx != -1
-    beg = str_list.find('\"', marker_idx) + 1   # find begin of url string
-    end = str_list.find('\"', beg)        # find end   of url string
+    marker_idx = str_list.find('src')           # finds first instance of 'src'
+    assert marker_idx != -1, "couldn' find 'src' in string supposed to contain url"
+    beg = str_list.find('\"', marker_idx) + 1   # find beginning of url string
+    end = str_list.find('\"', beg)              # find end of url string
     print(str_list[beg:end])
     return str_list[beg:end]
     
 def get_meta_data(url):
-    #observation1: meta data is found in 'article' tag
-    #observation2: the metadata categories are in 's' tag. 
+    """Takes an url of an 'artwork' page in wikiart and returns the meta data
+    as a dictionary.
+    
+    As Metadata are considered: The url, the title, the artist and all 
+    additional infomation in the column to the right of the picture. 
+    The keys are: 'url', 'title', 'artist' and the actual names of the 
+    categories on the website. 
+    Thus the keys depend on the categories given on the website. 
+    """
+    # observation1: meta data is found in 'article' tag
+    # observation2: the metadata categories are in 's' tag. 
     #       --> Not all categories for all artworks!!
-    #-> is the article tag used exclusively for this on the site?
+    # -> is the article tag used exclusively for this on the site?
+    
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'html.parser')
     article = soup.find_all('article')
-    assert len(article) == 1
+    assert len(article) == 1, "Found more than one 'article' tag on page"
     article = article[0]
     
-    #get metadata categories
-    catgs = article.find_all('s') #format [<s>Categorie1:</s>, ...]
+    # get metadata categories
+    catgs = article.find_all('s')               
     
-    #change list elements to strings and get rid of <s> and </s>
+    # Get actual text strings and getting rid of colon at the end of category.
     for i in range(len(catgs)):
-        catgs[i] = str(catgs[i].string)[:-1] # getting rid of colon
+        catgs[i] = str(catgs[i].string)[:-1]    
     num_catgs = len(catgs)
     #print(catgs)
     
-    
-    #getting rid of stuff that causes us troubles
-    #if you find more exception that need to be handled this is a good place
-    #to integrate them into the code
+    # Get rid of stuff that causes us troubles (i.e. pure text we don't need):
+    #   *   <script> tag
+    #   *   'order reproduction' box
+    # If you find more exception that need to be handled this is a good place
+    # to integrate them into the code.
     if article.script != None:
-        article.script.extract()                                    #<script> tag
+        article.script.extract()                                    
     if article.find_next(class_ = 'order-reproduction')!= None:
-        article.find_next(class_ = 'order-reproduction').extract()  #order box
+        article.find_next(class_ = 'order-reproduction').extract()  
     
-    #now we can look at the remaining strings
+    # Retrieve remaining strings
     content_list = list(article.stripped_strings)
-    #print(content_list)
+    # print(content_list)
     
-    #create dictionary for metadata from this list using categories:
-    #the first two entries are title and author
+    # Create dictionary for metadata from this list using categories.
+    # The first two lines of text left are title and author.
     #   --> always true??
     meta_dict = {'url': url,
         'title' : content_list[0], 'artist' : content_list[1]}
         
-    #get content list as a single string
+    # Get content list as a single string
+    #
+    # last category is 'Share'; we don't want to share
     content_str = ''.join(content_list)
-    for catg_idx in range(len(catgs)-1) : #last category is 'Share'; we don't want to share
+    for catg_idx in range(len(catgs)-1) : 
         beg = content_str.find(catgs[catg_idx]) + len(catgs[catg_idx]) +1
         end = content_str.find(catgs[catg_idx + 1])
         meta_dict.update({catgs[catg_idx]: content_str[beg:end]})
     
-    #we can't use this simpler method that would not require extracting the 
-    #categories, because entrys may have several lines in html
-    #e.g. 'c. 1504' has the c. separated
+    # we can't use this simpler method that would not require extracting the 
+    # categories, because entrys may have several lines in html
+    # e.g. 'c. 1504' has the c. separated
     """
     while i+1 <= len(content_list)-1:    #excludes assymetrical share at the end
         # [:-1] becaus 'Category:'
