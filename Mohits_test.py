@@ -1,20 +1,24 @@
-
 import requests
 from bs4 import BeautifulSoup
+
 #finds the  html address
 #TODO find better programm structure to include it in crawler 
 #idea: class that takes a url and loads the page. -> methods to get jpg and metadata
+
 def image_html_fn(url):
     """
     input: url of Wikiart page, which has a single image
     output: web url of the source image
     """
+
     page_trial_wikiart = requests.get(url)
 
     page_trial_wikiart_html = BeautifulSoup(page_trial_wikiart.content, 'html.parser')
+
     search_image_line=page_trial_wikiart_html.find_all(class_='ms-zoom-cursor') 
     
     assert len(search_image_line) != 0  #make sure the search was successful
+
     str_list=str(search_image_line[0])
 
     #used this class because all (?) the webpages seem to have a property that when you take your mouse it zooms in. 
@@ -56,8 +60,6 @@ def get_meta_data(url):
     article = soup.find_all('article')
     assert len(article) == 1
     article = article[0]
-    
-    
     
     #get metadata categories
     catgs = article.find_all('s') #format [<s>Categorie1:</s>, ...]
@@ -118,8 +120,16 @@ def image_save_as_file_fn(url_image, file_name):
             f.write(response.content)
 #Chose a random page
 #url = "https://www.wikiart.org/en/francesco-clemente/the-four-corners-1985"
-url = "https://www.wikiart.org/en/raphael/vision-of-a-knight"
-print(get_meta_data(url))
-url_image=image_html_fn(url)
-file_name='sample.jpg'
-image_save_as_file_fn(url_image, file_name)
+
+if __name__=="__main__":
+
+    # Retrieve one painting
+    url = "https://www.wikiart.org/en/raphael/vision-of-a-knight"
+
+    print(get_meta_data(url))
+
+    url_image=image_html_fn(url)
+
+    file_name='sample.jpg'
+
+    image_save_as_file_fn(url_image, file_name)
