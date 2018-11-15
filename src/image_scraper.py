@@ -1,57 +1,74 @@
 import requests
 from bs4 import BeautifulSoup
+import json
 
-# finds the  html address
-# TODO find better programm structure to include it in crawler
-# idea: class that takes a url and loads the page. -> methods to get jpg and metadata
+
+def get_meta_data_json(url):
+    """Downloads the metadata of an artwork and returns a json object.
+
+    Input:
+        url: the url of an 'artwork' page
+
+    Ouput:
+        painting_json: a json file containing all the metadata available
+        in the paintingJson attribute.
+
+    Description:
+        The source of 'artwork' pages contain an attribute 'paintingJson', which
+        has many useful keys, including a direct url of the image.
+
+        For example:
+
+        {'_t': 'PaintingForGalleryNew',
+        '_id': '5772847bedc2cb3880fded05',
+        'title': 'Self-portrait',
+        'year': '1574',
+        'width': 423,
+        'height': 600,
+        'artistName': 'Hans von Aachen',
+        'image': 'https://uploads4.wikiart.org/images/hans-von-aachen/self-portrait-1574.jpg',
+        'map': '0123**67*',
+        'paintingUrl': '/en/hans-von-aachen/self-portrait-1574',
+        'artistUrl': '/en/hans-von-aachen',
+        'albums': None,
+        'flags': 4,
+        'images': None}
+    """
+
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, 'lxml')
+
+    # this string is of the form "paintingJson = {"att": "val"}"
+    # so we need to split it before parsing it
+    painting_json_string = soup.find(class_="wiki-layout-painting-info-bottom")['ng-init']
+
+    return json.loads(painting_json_string.split("=")[1])
+
 
 def image_html_fn(url):
-    """
-    input: url of Wikiart page, which has a single image
-    output: web url of the source image.
-    """
+    """Extracts the image url from an 'artwork' page.
 
-    page_trial_wikiart = requests.get(url)
+    Input:
+        url: the URL of an 'artwork' Wikiart page.
 
-    page_trial_wikiart_html = BeautifulSoup(page_trial_wikiart.content, 'html.parser')
+    Output:
+        img_url: direct url of the source image.
 
-    search_image_line=page_trial_wikiart_html.find_all(class_='ms-zoom-cursor')
-
-    assert len(search_image_line) != 0  #make sure the search was successful
-
-    str_list=str(search_image_line[0])
-
-    # used this class because all (?) the webpages seem to have a property
-    # that when you take your mouse it zooms in.
-    # This is how I am trying to find source image
-    # print(search_image_line)
-
-    # I replaced that piece in favor of shorter version below.
-    # I think, they are equivlent under the assumption that there is only one
-    # picture on the site.
-    """
-    temp_var=[]
-    for i in range(len(str_list)):
-    ##searches for the word "src" and then copies the address after the word "src"
-        j=0
-        #if str_list[i:i+1]
-        if str_list[i:i+3]=="src":
-            start_index=str_list.find('\"',i+3)
-            #print(start_index)
-            end_index=str_list.find('\"', start_index+1)
-            #print(end_index)
-            for j in range(start_index+1, end_index):
-                temp_var.append(str_list[j])
-            #print(temp_var)
-    return ''.join(temp_var)
+    See Also:
+        This same information is contained in the 'image' key of the JSON object
+        returned by `get_meta_data_json`.
     """
 
-    marker_idx = str_list.find('src')           # finds first instance of 'src'
-    assert marker_idx != -1, "couldn' find 'src' in string supposed to contain url"
-    beg = str_list.find('\"', marker_idx) + 1   # find beginning of url string
-    end = str_list.find('\"', beg)              # find end of url string
-    print(str_list[beg:end])
-    return str_list[beg:end]
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, 'lxml')
+
+    # the image url is in the "open graph" section
+    img_url = soup.find(attrs={"property":"og:image"})['content']
+
+    assert len(img_url)!=0,"Image not found."
+
+    return img_url
+
 
 def get_meta_data(url):
     """Takes an url of an 'artwork' page in wikiart and returns the meta data
@@ -69,7 +86,7 @@ def get_meta_data(url):
     # -> is the article tag used exclusively for this on the site?
 
     page = requests.get(url)
-    soup = BeautifulSoup(page.content, 'html.parser')
+    soup = BeautifulSoup(page.content, 'lxml')
     article = soup.find_all('article')
     assert len(article) == 1, "Found more than one 'article' tag on page"
     article = article[0]
@@ -112,40 +129,41 @@ def get_meta_data(url):
         end = content_str.find(catgs[catg_idx + 1])
         meta_dict.update({catgs[catg_idx]: content_str[beg:end]})
 
-    # we can't use this simpler method that would not require extracting the
-    # categories, because entrys may have several lines in html
-    # e.g. 'c. 1504' has the c. separated
-    """
-    while i+1 <= len(content_list)-1:    #excludes assymetrical share at the end
-        # [:-1] becaus 'Category:'
-        meta_dict.update({content_list[i][:-1] : content_list[i+1]})
-        i = i+2
-    """
     return meta_dict
 
 
+# TODO: what happens if the image already exists?
+def image_save_as_file_fn(img_url, file_name=None):
+    """Downloads an image and saves it to disk.
 
-def image_save_as_file_fn(url_image, file_name):
+    Input:
+        img_url: Direct url of an image
+
+        file_name: optional file name to save the image to. If not
+        given the one contained in the URL is used.
     """
-    input: web url of jpg kind of image
-    output: a file saved on local computer
-    """
-    response = requests.get(url_image)
+    response = requests.get(url_image,stream=True)
+
+    # the URL is something like http://stuff.com/image.jpg
+    if file_name is None:
+        file_name = img_url.split('/')[-1]
+
     if response.status_code == 200:
         with open(file_name, 'wb') as f:
             f.write(response.content)
-#Chose a random page
-#url = "https://www.wikiart.org/en/francesco-clemente/the-four-corners-1985"
+
 
 if __name__=="__main__":
 
-    # Retrieve one painting
+    # Retrieve one painting as example
     url = "https://www.wikiart.org/en/raphael/vision-of-a-knight"
 
     print(get_meta_data(url))
 
     url_image=image_html_fn(url)
 
-    file_name='sample.jpg'
+    print(url_image)
 
-    image_save_as_file_fn(url_image, file_name)
+    # file_name='sample.jpg'
+
+    image_save_as_file_fn(url_image)
