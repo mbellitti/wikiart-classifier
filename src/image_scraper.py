@@ -42,7 +42,48 @@ def get_meta_data_json(url):
     # so we need to split it before parsing it
     painting_json_string = soup.find(class_="wiki-layout-painting-info-bottom")['ng-init']
 
-    return json.loads(painting_json_string.split("=")[1])
+    meta_data = json.loads(painting_json_string.split("=")[1])
+
+    ##################################################
+    # Merging wit Mohit version
+    ##################################################
+
+    article = soup.find('article')
+    catgs = [cat.string.strip(':') for cat in article.find_all('s')]
+
+    ##################################################
+    # Done up to here
+    ##################################################
+
+    # Get rid of stuff that causes us troubles (i.e. pure text we don't need):
+    #   *   <script> tag
+    #   *   'order reproduction' box
+    # If you find more exception that need to be handled this is a good place
+    # to integrate them into the code.
+    if article.script is not None:
+        article.script.extract()
+    if article.find_next(class_ = 'order-reproduction') is not None:
+        article.find_next(class_ = 'order-reproduction').extract()
+
+    # Retrieve remaining strings
+    content_list = list(article.stripped_strings)
+
+    # Create dictionary for metadata from this list using categories.
+    # The first two lines of text left are title and author.
+    #   --> always true??
+    meta_dict = {'url': url,
+        'title' : content_list[0], 'artist' : content_list[1]}
+
+    # Get content list as a single string
+    #
+    # last category is 'Share'; we don't want to share
+    content_str = ''.join(content_list)
+    for catg_idx in range(len(catgs)-1):
+        beg = content_str.find(catgs[catg_idx]) + len(catgs[catg_idx]) +1
+        end = content_str.find(catgs[catg_idx + 1])
+        meta_dict.update({catgs[catg_idx]: content_str[beg:end]})
+
+    return meta_data
 
 
 def image_html_fn(url):
@@ -65,7 +106,7 @@ def image_html_fn(url):
     # the image url is in the "open graph" section
     img_url = soup.find(attrs={"property":"og:image"})['content']
 
-    assert len(img_url)!=0,"Image not found."
+    assert img_url,"Image not found."
 
     return img_url
 
@@ -97,22 +138,19 @@ def get_meta_data(url):
     # Get actual text strings and getting rid of colon at the end of category.
     for i in range(len(catgs)):
         catgs[i] = str(catgs[i].string)[:-1]
-    num_catgs = len(catgs)
-    #print(catgs)
 
     # Get rid of stuff that causes us troubles (i.e. pure text we don't need):
     #   *   <script> tag
     #   *   'order reproduction' box
     # If you find more exception that need to be handled this is a good place
     # to integrate them into the code.
-    if article.script != None:
+    if article.script is not None:
         article.script.extract()
-    if article.find_next(class_ = 'order-reproduction')!= None:
+    if article.find_next(class_ = 'order-reproduction') is not None:
         article.find_next(class_ = 'order-reproduction').extract()
 
     # Retrieve remaining strings
     content_list = list(article.stripped_strings)
-    # print(content_list)
 
     # Create dictionary for metadata from this list using categories.
     # The first two lines of text left are title and author.
@@ -124,7 +162,7 @@ def get_meta_data(url):
     #
     # last category is 'Share'; we don't want to share
     content_str = ''.join(content_list)
-    for catg_idx in range(len(catgs)-1) :
+    for catg_idx in range(len(catgs)-1):
         beg = content_str.find(catgs[catg_idx]) + len(catgs[catg_idx]) +1
         end = content_str.find(catgs[catg_idx + 1])
         meta_dict.update({catgs[catg_idx]: content_str[beg:end]})
@@ -156,11 +194,11 @@ def image_save_as_file_fn(img_url, file_name=None):
 if __name__=="__main__":
 
     # Retrieve one painting as example
-    url = "https://www.wikiart.org/en/raphael/vision-of-a-knight"
+    page_url = "https://www.wikiart.org/en/raphael/vision-of-a-knight"
 
-    print(get_meta_data(url))
+    print(get_meta_data(page_url))
 
-    url_image=image_html_fn(url)
+    url_image=image_html_fn(page_url)
 
     print(url_image)
 
