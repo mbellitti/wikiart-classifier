@@ -13,7 +13,7 @@ def get_meta_data(url,wanted_keys=None):
         List of keys in the dictionary associated to the artwork.
         If None, returns the default metadata list
             ['_id','title','artistname','image',
-            'date','style','genre']
+            'year','style','genre']
         If "all" returns a whole lot of other metadata scraped from
         the page. Other available keys include:
             'original title','height','width','media','location',
@@ -26,27 +26,20 @@ def get_meta_data(url,wanted_keys=None):
         meta_data: a dictionary file containing the requested painting
         metadata.
 
-    Description:
-        The source of 'artwork' pages contain an attribute 'paintingJson', which
-        has many useful keys, including a direct url of the image.
+    Examples:
 
-        For example:
+        page_url = "https://www.wikiart.org/en/raphael/vision-of-a-knight"
+        data = get_meta_data(page_url)
 
-        {'_t': 'PaintingForGalleryNew',
-        '_id': '5772847bedc2cb3880fded05',
-        'title': 'Self-portrait',
-        'year': '1574',
-        'width': 423,
-        'height': 600,
-        'artistName': 'Hans von Aachen',
-        'image': 'https://uploads4.wikiart.org/images/hans-von-aachen/self-portrait-1574.jpg',
-        'map': '0123**67*',
-        'paintingUrl': '/en/hans-von-aachen/self-portrait-1574',
-        'artistUrl': '/en/hans-von-aachen',
-        'albums': None,
-        'flags': 4,
-        'images': None}
+        {'_id': '577271fdedc2cb3880c3846a',
+         'title': 'vision of a knight',
+         'artistname': 'raphael',
+         'image': 'https://uploads5.wikiart.org/images/raphael/vision-of-a-knight.jpg',
+         'year': '1504',
+         'style': 'high renaissance',
+         'genre': 'genre painting'}
     """
+
 
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'lxml')
@@ -65,7 +58,7 @@ def get_meta_data(url,wanted_keys=None):
         return meta_data
     else:
         if wanted_keys is None:
-            wanted_keys = ['_id','title','artistname','image','date','style','genre']
+            wanted_keys = ['_id','title','artistname','image','year','style','genre']
         return {key:meta_data[key] if key in meta_data else None for key in wanted_keys}
 
 
@@ -121,7 +114,10 @@ def image_save_as_file_fn(img_url, file_name=None):
 if __name__=="__main__":
 
     # Retrieve one painting as example
-    page_url = "https://www.wikiart.org/en/raphael/vision-of-a-knight"
+    # page_url = "https://www.wikiart.org/en/raphael/vision-of-a-knight"
+    # page_url = "https://www.wikiart.org/en/hans-von-aachen/self-portrait-1574"
+    page_url = "https://www.wikiart.org/en/giovanni-bellini/the-feast-of-the-gods-1514"
+
 
     print("Default metadata:")
 
