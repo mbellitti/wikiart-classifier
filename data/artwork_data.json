@@ -1,0 +1,10 @@
+import pickle
+
+
+filename1 = 'artworks_urls.pkl'
+f1 = open(filename1, 'rb')
+data=pickle.load(f1)
+f1.close()
+print('number of urls', len(data))
+for i in range(10):
+    print(data[i])
