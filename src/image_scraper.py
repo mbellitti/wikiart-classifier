@@ -100,7 +100,7 @@ def image_save_as_file_fn(img_url, file_name=None):
         file_name: optional file name to save the image to. If not
         given the one contained in the URL is used.
     """
-    response = requests.get(url_image,stream=True)
+    response = requests.get(img_url,stream=True)#requests.get(url_image,stream=True)
 
     # the URL is something like http://stuff.com/image.jpg
     if file_name is None:
