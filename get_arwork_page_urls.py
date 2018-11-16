@@ -7,16 +7,26 @@ def get_imagepage_urls(test = False):
     """For every artwork there is a separate page in wikiart. This function
     gets the urls of all these pages.
     
-    The script relies on the fact, that there are pages Listing all artist
+    Input:
+        test: if True, then only the artwork urls of a single artist
+        are returned
+    
+    Output: 
+        artworks_urls: list of urls of all (execpt for test == True) artwork
+        pages 
+        
+        skipped_urls: if request.get(url) fails for a given artist page, 
+        the this url is skipped and written into this list. 
+        A successful run returns an empty skipped_urls list. 
+    
+    The script relies on the fact, that there are pages listing all artists
     with the same initial letter with urls of the Form
     https://www.wikiart.org/en/alphabet/<letter>/text-list
-    and for every artist there is a page listing all his or hers artworks 
-    with the url of the form
-    https://www.wikiart.org/en/<artist>/all-works/text-list
+    and for every artist there is a page listing all his or her artworks 
+    with an url of the form
+    https://www.wikiart.org/en/<artist>/all-works/text-list .
     Wikiart has one artist listed starting with a number instead of a letter.
-    The respective page takes %F8 (Ø) at the letter place.
-    
-    If test is True only the urls for a single artist are extracted as a test. 
+    The respective page takes %F8 (Ø) at the <letter> place.
     """
     
     if test ==True:
@@ -63,6 +73,12 @@ def get_imagepage_urls(test = False):
 def get_textlist_urls(url):
     """Takes an url of an text-list page on wikiart and returns a list with 
     the urls in the list. 
+    
+    Input:
+        url: url of an text-list page on wikiart
+    
+    Output:
+        urls: a list of the urls of all links in the text-list
     
     Examples of text-list pages on wikiart::
         *   https://www.wikiart.org/en/alphabet/<letter>/text-list
