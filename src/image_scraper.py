@@ -1,17 +1,30 @@
+import json
 import requests
 from bs4 import BeautifulSoup
-import json
 
 
-def get_meta_data_json(url):
+def get_meta_data(url,wanted_keys=None):
     """Downloads the metadata of an artwork and returns a json object.
 
     Input:
         url: the url of an 'artwork' page
 
+        wanted_keys: None,"all" or a list of strings.
+        List of keys in the dictionary associated to the artwork.
+        If None, returns the default metadata list
+            ['_id','title','artistname','image',
+            'date','style','genre']
+        If "all" returns a whole lot of other metadata scraped from
+        the page. Other available keys include:
+            'original title','height','width','media','location',
+            'dimensions'
+        A list of strings makes it return only the one you asked for.
+        If the page doesn't have one of the keys requested, it will
+        have value None.
+
     Ouput:
-        painting_json: a json file containing all the metadata available
-        in the paintingJson attribute.
+        meta_data: a dictionary file containing the requested painting
+        metadata.
 
     Description:
         The source of 'artwork' pages contain an attribute 'paintingJson', which
@@ -38,56 +51,29 @@ def get_meta_data_json(url):
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'lxml')
 
-    # this string is of the form "paintingJson = {"att": "val"}"
-    # so we need to split it before parsing it
+    # This string is of the form "paintingJson = {"att": "val"}"
     painting_json_string = soup.find(class_="wiki-layout-painting-info-bottom")['ng-init']
+    meta_data = json.loads(painting_json_string.lower().split("=")[1])
 
-    meta_data = json.loads(painting_json_string.split("=")[1])
+    # All the information we need is in the 'li' tag, but there are also some useless things
+    for lis in soup.find('article').find_all('li'):
+        key,*val = lis.stripped_strings
+        meta_data[key.strip(':').lower()] = "".join(val).lower()
 
-    ##################################################
-    # Merging wit Mohit version
-    ##################################################
 
-    article = soup.find('article')
-    catgs = [cat.string.strip(':') for cat in article.find_all('s')]
-
-    ##################################################
-    # Done up to here
-    ##################################################
-
-    # Get rid of stuff that causes us troubles (i.e. pure text we don't need):
-    #   *   <script> tag
-    #   *   'order reproduction' box
-    # If you find more exception that need to be handled this is a good place
-    # to integrate them into the code.
-    if article.script is not None:
-        article.script.extract()
-    if article.find_next(class_ = 'order-reproduction') is not None:
-        article.find_next(class_ = 'order-reproduction').extract()
-
-    # Retrieve remaining strings
-    content_list = list(article.stripped_strings)
-
-    # Create dictionary for metadata from this list using categories.
-    # The first two lines of text left are title and author.
-    #   --> always true??
-    meta_dict = {'url': url,
-        'title' : content_list[0], 'artist' : content_list[1]}
-
-    # Get content list as a single string
-    #
-    # last category is 'Share'; we don't want to share
-    content_str = ''.join(content_list)
-    for catg_idx in range(len(catgs)-1):
-        beg = content_str.find(catgs[catg_idx]) + len(catgs[catg_idx]) +1
-        end = content_str.find(catgs[catg_idx + 1])
-        meta_dict.update({catgs[catg_idx]: content_str[beg:end]})
-
-    return meta_data
+    if wanted_keys == "all":
+        return meta_data
+    else:
+        if wanted_keys is None:
+            wanted_keys = ['_id','title','artistname','image','date','style','genre']
+        return {key:meta_data[key] if key in meta_data else None for key in wanted_keys}
 
 
 def image_html_fn(url):
     """Extracts the image url from an 'artwork' page.
+
+    This same information is contained in the tag 'image' of the
+    dictionary returned by get_meta_data().
 
     Input:
         url: the URL of an 'artwork' Wikiart page.
@@ -109,65 +95,6 @@ def image_html_fn(url):
     assert img_url,"Image not found."
 
     return img_url
-
-
-def get_meta_data(url):
-    """Takes an url of an 'artwork' page in wikiart and returns the meta data
-    as a dictionary.
-
-    As Metadata are considered: The url, the title, the artist and all
-    additional infomation in the column to the right of the picture.
-    The keys are: 'url', 'title', 'artist' and the actual names of the
-    categories on the website.
-    Thus the keys depend on the categories given on the website.
-    """
-    # observation1: meta data is found in 'article' tag
-    # observation2: the metadata categories are in 's' tag.
-    #       --> Not all categories for all artworks!!
-    # -> is the article tag used exclusively for this on the site?
-
-    page = requests.get(url)
-    soup = BeautifulSoup(page.content, 'lxml')
-    article = soup.find_all('article')
-    assert len(article) == 1, "Found more than one 'article' tag on page"
-    article = article[0]
-
-    # get metadata categories
-    catgs = article.find_all('s')
-
-    # Get actual text strings and getting rid of colon at the end of category.
-    for i in range(len(catgs)):
-        catgs[i] = str(catgs[i].string)[:-1]
-
-    # Get rid of stuff that causes us troubles (i.e. pure text we don't need):
-    #   *   <script> tag
-    #   *   'order reproduction' box
-    # If you find more exception that need to be handled this is a good place
-    # to integrate them into the code.
-    if article.script is not None:
-        article.script.extract()
-    if article.find_next(class_ = 'order-reproduction') is not None:
-        article.find_next(class_ = 'order-reproduction').extract()
-
-    # Retrieve remaining strings
-    content_list = list(article.stripped_strings)
-
-    # Create dictionary for metadata from this list using categories.
-    # The first two lines of text left are title and author.
-    #   --> always true??
-    meta_dict = {'url': url,
-        'title' : content_list[0], 'artist' : content_list[1]}
-
-    # Get content list as a single string
-    #
-    # last category is 'Share'; we don't want to share
-    content_str = ''.join(content_list)
-    for catg_idx in range(len(catgs)-1):
-        beg = content_str.find(catgs[catg_idx]) + len(catgs[catg_idx]) +1
-        end = content_str.find(catgs[catg_idx + 1])
-        meta_dict.update({catgs[catg_idx]: content_str[beg:end]})
-
-    return meta_dict
 
 
 # TODO: what happens if the image already exists?
@@ -196,7 +123,13 @@ if __name__=="__main__":
     # Retrieve one painting as example
     page_url = "https://www.wikiart.org/en/raphael/vision-of-a-knight"
 
+    print("Default metadata:")
+
     print(get_meta_data(page_url))
+
+    print("All metadata:")
+
+    print(get_meta_data(page_url,wanted_keys="all"))
 
     url_image=image_html_fn(page_url)
 
@@ -204,4 +137,4 @@ if __name__=="__main__":
 
     # file_name='sample.jpg'
 
-    image_save_as_file_fn(url_image)
+    # image_save_as_file_fn(url_image)
