@@ -46,7 +46,7 @@ def get_meta_data(url,wanted_keys=None):
 
     # This string is of the form "paintingJson = {"att": "val"}"
     painting_json_string = soup.find(class_="wiki-layout-painting-info-bottom")['ng-init']
-    meta_data = json.loads(painting_json_string.lower().split("=")[1])
+    meta_data = json.loads(painting_json_string.lower().split("=",1)[1])
 
     # All the information we need is in the 'li' tag, but there are also some useless things
     for lis in soup.find('article').find_all('li'):
@@ -100,7 +100,7 @@ def image_save_as_file_fn(img_url, file_name=None):
         file_name: optional file name to save the image to. If not
         given the one contained in the URL is used.
     """
-    response = requests.get(img_url,stream=True)#requests.get(url_image,stream=True)
+    response = requests.get(url_image,stream=True)
 
     # the URL is something like http://stuff.com/image.jpg
     if file_name is None:
