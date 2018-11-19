@@ -46,7 +46,7 @@ def get_meta_data(url,wanted_keys=None):
 
     # This string is of the form "paintingJson = {"att": "val"}"
     painting_json_string = soup.find(class_="wiki-layout-painting-info-bottom")['ng-init']
-    meta_data = json.loads(painting_json_string.lower().split("=")[1])
+    meta_data = json.loads(painting_json_string.lower().split("=",1)[1])
 
     # All the information we need is in the 'li' tag, but there are also some useless things
     for lis in soup.find('article').find_all('li'):
