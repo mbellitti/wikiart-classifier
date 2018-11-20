@@ -56,4 +56,3 @@ def save_json(file_name, N_rows=2):
 f2='artwork_data.json'    
 
 save_json(f2)    
-#i=166 #bad url.
