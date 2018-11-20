@@ -5,10 +5,8 @@ from bs4 import BeautifulSoup
 
 def get_meta_data(url,wanted_keys=None):
     """Downloads the metadata of an artwork and returns a json object.
-
     Input:
         url: the url of an 'artwork' page
-
         wanted_keys: None,"all" or a list of strings.
         List of keys in the dictionary associated to the artwork.
         If None, returns the default metadata list
@@ -21,16 +19,12 @@ def get_meta_data(url,wanted_keys=None):
         A list of strings makes it return only the one you asked for.
         If the page doesn't have one of the keys requested, it will
         have value None.
-
     Ouput:
         meta_data: a dictionary file containing the requested painting
         metadata.
-
     Examples:
-
         page_url = "https://www.wikiart.org/en/raphael/vision-of-a-knight"
         data = get_meta_data(page_url)
-
         {'_id': '577271fdedc2cb3880c3846a',
          'title': 'vision of a knight',
          'artistname': 'raphael',
@@ -64,16 +58,12 @@ def get_meta_data(url,wanted_keys=None):
 
 def image_html_fn(url):
     """Extracts the image url from an 'artwork' page.
-
     This same information is contained in the tag 'image' of the
     dictionary returned by get_meta_data().
-
     Input:
         url: the URL of an 'artwork' Wikiart page.
-
     Output:
         img_url: direct url of the source image.
-
     See Also:
         This same information is contained in the 'image' key of the JSON object
         returned by `get_meta_data_json`.
@@ -93,10 +83,8 @@ def image_html_fn(url):
 # TODO: what happens if the image already exists?
 def image_save_as_file_fn(img_url, file_name=None):
     """Downloads an image and saves it to disk.
-
     Input:
         img_url: Direct url of an image
-
         file_name: optional file name to save the image to. If not
         given the one contained in the URL is used.
     """
