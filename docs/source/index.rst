@@ -1,5 +1,5 @@
 .. WikiArt Classifier documentation master file, created by
-   sphinx-quickstart on Thu Nov 15 08:05:24 2018.
+   sphinx-quickstart on Wed Nov 21 10:51:41 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
