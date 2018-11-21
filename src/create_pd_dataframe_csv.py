@@ -4,14 +4,17 @@ from image_scraper import *
 from multiprocessing import Pool
 
 
-def save_csv(file_name, N_rows=2):
+def save_csv(file_name, N_rows=None, file_url_list='artworks_urls_full.pkl'):
     """
     Description:
         It opens the pickle-file of urls from "data" folder and saves a CSV file in "data" folder with meta data and file-name as the last column.
-    input:
-        file_name: name of the csv file in which data would be saved
 
-    output:
+    Input:
+        file_name: name of the csv file in which data would be saved
+        N_rows: number of urls to download, by default downloads all of them
+        url_list: picked file. Each line is one that will be downloaded
+
+    Output:
         None
 
     Example:
@@ -23,15 +26,13 @@ def save_csv(file_name, N_rows=2):
 
     To-do:
         1. It should ignore the urls which give error and move on to the other urls in the list.
-        2. N_rows should be len(url_list).
-
     """
 
-    filename_url = 'artworks_urls_full.pkl' # pickled file with all artwork urls
-
-    # read only the first N_rows lines of the file
-    with open('../data/'+filename_url, 'rb') as f:
-        url_list = pickle.load(f)[:N_rows]
+    with open('../data/'+file_url_list, 'rb') as f:
+        if N_rows is None:
+            url_list = pickle.load(f)
+        else:
+            url_list = pickle.load(f)[:N_rows]
 
     pool = Pool(processes=4)
     list_data = pool.map(get_meta_data, url_list)
@@ -40,4 +41,4 @@ def save_csv(file_name, N_rows=2):
 
 
 if __name__ == '__main__':
-    save_csv("database.csv",20)
+    save_csv("database.csv",100)
