@@ -1,7 +1,25 @@
 import json
+import os.path
 import requests
 from bs4 import BeautifulSoup
 
+class ArtWork:
+    def __init__(self,url):
+        """The metadata keys are converted to attributes.
+        Example:
+            stuff = ArtWork(url)
+            stuff.title
+        """
+
+        self.__dict__ = get_meta_data(url)
+
+    def get_image(self):
+        """Download the image of the artwork, unless it
+        already exists. The name of the image file is saved
+        in the `imagefile` attributeself.
+        """
+
+        self.imagefile = download_image(self.image)
 
 def get_meta_data(url,wanted_keys=None):
     """Downloads the metadata of an artwork and returns a json object.
@@ -34,6 +52,7 @@ def get_meta_data(url,wanted_keys=None):
          'genre': 'genre painting'}
     """
 
+    print("Retrieving "+url)
 
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'lxml')
@@ -56,10 +75,14 @@ def get_meta_data(url,wanted_keys=None):
         return {key:meta_data[key] if key in meta_data else None for key in wanted_keys}
 
 
+# DO NOT USE THIS. Seriously. Do not.
 def image_html_fn(url):
     """Extracts the image url from an 'artwork' page.
+
     This same information is contained in the tag 'image' of the
-    dictionary returned by get_meta_data().
+    dictionary returned by get_meta_data(), please use the version of this
+    function that doesn't make an extra request.
+
     Input:
         url: the URL of an 'artwork' Wikiart page.
     Output:
@@ -80,23 +103,32 @@ def image_html_fn(url):
     return img_url
 
 
-# TODO: what happens if the image already exists?
-def image_save_as_file_fn(img_url, file_name=None):
+def download_image(img_url, file_name=None):
     """Downloads an image and saves it to disk.
     Input:
         img_url: Direct url of an image
         file_name: optional file name to save the image to. If not
         given the one contained in the URL is used.
+
+    Output:
+        file_name: file name of the downloaded image
     """
-    response = requests.get(url_image,stream=True)
 
     # the URL is something like http://stuff.com/image.jpg
     if file_name is None:
         file_name = img_url.split('/')[-1]
 
-    if response.status_code == 200:
-        with open(file_name, 'wb') as f:
-            f.write(response.content)
+    if os.path.isfile(file_name):
+        print("File already exists: {}".format(file_name))
+    else:
+        response = requests.get(img_url,stream=True)
+
+        if response.status_code == 200:
+            with open(file_name, 'wb') as f:
+                f.write(response.content)
+        # TODO: Raise an exception if the request is bad?
+
+    return file_name
 
 
 if __name__=="__main__":
@@ -105,7 +137,6 @@ if __name__=="__main__":
     # page_url = "https://www.wikiart.org/en/raphael/vision-of-a-knight"
     # page_url = "https://www.wikiart.org/en/hans-von-aachen/self-portrait-1574"
     page_url = "https://www.wikiart.org/en/giovanni-bellini/the-feast-of-the-gods-1514"
-
 
     print("Default metadata:")
 
