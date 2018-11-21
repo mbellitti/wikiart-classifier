@@ -40,4 +40,4 @@ def save_csv(file_name, N_rows=2):
 
 
 if __name__ == '__main__':
-    save_csv("database.csv",20)
+    save_csv("database.csv",1000)

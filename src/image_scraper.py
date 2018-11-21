@@ -1,17 +1,33 @@
+"""A module to retrieve artworks from WikiArt and manipulate them."""
+
 import json
 import os.path
 import requests
 from bs4 import BeautifulSoup
 
 class ArtWork:
-    def __init__(self,url):
-        """The metadata keys are converted to attributes.
-        Example:
-            stuff = ArtWork(url)
-            stuff.title
-        """
+    """Class to represent artworks.
 
+    During initialization it retrieves the metadata from
+    WikiArt and stores them in the attributes.
+
+    Example:
+        art = ArtWork("http://some_painting_on_wikiart")
+        art.title
+
+    If you want to see all the available attributes, you can either
+    check `art.__dict__` or just do `print(art)`.
+
+    """
+    def __init__(self,url):
         self.__dict__ = get_meta_data(url)
+
+    def __str__(self):
+        s = "\n"
+        for key,val in self.__dict__.items():
+            s += ("{}: {}\n".format(key,val))
+
+        return s
 
     def get_image(self):
         """Download the image of the artwork, unless it
@@ -75,34 +91,6 @@ def get_meta_data(url,wanted_keys=None):
         return {key:meta_data[key] if key in meta_data else None for key in wanted_keys}
 
 
-# DO NOT USE THIS. Seriously. Do not.
-def image_html_fn(url):
-    """Extracts the image url from an 'artwork' page.
-
-    This same information is contained in the tag 'image' of the
-    dictionary returned by get_meta_data(), please use the version of this
-    function that doesn't make an extra request.
-
-    Input:
-        url: the URL of an 'artwork' Wikiart page.
-    Output:
-        img_url: direct url of the source image.
-    See Also:
-        This same information is contained in the 'image' key of the JSON object
-        returned by `get_meta_data_json`.
-    """
-
-    page = requests.get(url)
-    soup = BeautifulSoup(page.content, 'lxml')
-
-    # the image url is in the "open graph" section
-    img_url = soup.find(attrs={"property":"og:image"})['content']
-
-    assert img_url,"Image not found."
-
-    return img_url
-
-
 def download_image(img_url, file_name=None):
     """Downloads an image and saves it to disk.
     Input:
@@ -129,6 +117,34 @@ def download_image(img_url, file_name=None):
         # TODO: Raise an exception if the request is bad?
 
     return file_name
+
+
+# DO NOT USE THIS. Seriously. Do not.
+def image_html_fn(url):
+    """Extracts the image url from an 'artwork' page.
+
+    This same information is contained in the tag 'image' of the
+    dictionary returned by get_meta_data(), please use the version of this
+    function that doesn't make an extra request.
+
+    Input:
+        url: the URL of an 'artwork' Wikiart page.
+    Output:
+        img_url: direct url of the source image.
+    See Also:
+        This same information is contained in the 'image' key of the JSON object
+        returned by `get_meta_data_json`.
+    """
+
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, 'lxml')
+
+    # the image url is in the "open graph" section
+    img_url = soup.find(attrs={"property":"og:image"})['content']
+
+    assert img_url,"Image not found."
+
+    return img_url
 
 
 if __name__=="__main__":
