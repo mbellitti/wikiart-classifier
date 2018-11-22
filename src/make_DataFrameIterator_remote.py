@@ -1,6 +1,8 @@
 """this script definies a flow_from_dataframe_remote method, that can be
 activated in any other script by executing this file.
 """
+import os
+import os.path
 from keras import preprocessing
 from keras_preprocessing.image import *
 
@@ -34,7 +36,9 @@ def load_img_remote(path, url, grayscale=False, color_mode='rgb', target_size=No
         raise ImportError('Could not import PIL.Image. '
                           'The use of `array_to_img` requires PIL.')
     ###change method to fetch image!
-    img = pil_image.open(path)
+    #img_raw is the output of response.content of the image url
+    img_raw = ############
+    img = pil_image.open(BytesIO(img_raw))
     if color_mode == 'grayscale':
         if img.mode != 'L':
             img = img.convert('L')
@@ -85,8 +89,6 @@ def flow_from_dataframe_remote(self, dataframe, directory,
             the filenames of the target images.
         y_col: string or list of strings,columns in
             the dataframe that will be the target data.
-        has_ext: bool, True if filenames in dataframe[x_col]
-            has filename extensions,else False.
         target_size: tuple of integers `(height, width)`, default: `(256, 256)`.
             The dimensions to which all images found will be resized.
         color_mode: one of "grayscale", "rgb". Default: "rgb".
@@ -210,8 +212,7 @@ class DataFrameIterator_remote(Iterator):
             "hamming" are also supported. By default, "nearest" is used.
         sort: Boolean, whether to sort dataframe by filename (before shuffle).
         drop_duplicates: Boolean, whether to drop duplicate rows based on filename.
-    """
-    #changes that would have to be applied######################################
+    """self.fail('message')
     def __init__(self, dataframe, directory, image_data_generator,
                  x_col="filenames", y_col="class", z_col = "url",
                  #has_ext=True, #removed for remote use
@@ -397,3 +398,6 @@ class DataFrameIterator_remote(Iterator):
         # The transformation of images is not under thread lock
         # so it can be done in parallel
         return self._get_batches_of_transformed_samples(index_array)
+
+if __name__ = '__main__':
+    preprocessing.ImageDataGenerator.flow_from_dataframe_remote =flow_from_dataframe_remote
