@@ -74,7 +74,14 @@ def get_meta_data(url,wanted_keys=None):
          'image': 'https://uploads5.wikiart.org/images/raphael/vision-of-a-knight.jpg',
          'year': '1504',
          'style': 'high renaissance',
-         'genre': 'genre painting'}
+         'genre': 'genre painting',
+         'image_size_data': <list of dictionaries; one for every available file>
+                    [{'sizekb': '13',
+                      'width' : '210',
+                      'height': '210',
+                      'url': https://uploads6.wikiart.org/images/raphael/vision-of-a-knight.jpg!PinterestSmall.jpg,
+                      'name': 'pinterestsmall'}, ...]
+        }
     """
 
     print("Retrieving "+url)
@@ -91,12 +98,17 @@ def get_meta_data(url,wanted_keys=None):
         key,*val = lis.stripped_strings
         meta_data[key.strip(':').lower()] = "".join(val).lower()
 
+    # Information about available sizes
+    thumbnail_json_string = soup.find('main', attrs = {'ng-controller' : 'ArtworkViewCtrl'})['ng-init']
+    thumbnail_json = json.loads(thumbnail_json_string[:-1].lower().split("=",1)[1])
+    image_size_data = thumbnail_json['imagethumbnailsmodel'][0]['thumbnails']
+    meta_data['image_size_data'] = image_size_data
 
     if wanted_keys == "all":
         return meta_data
     else:
         if wanted_keys is None:
-            wanted_keys = ['_id','title','artistname','image','year','style','genre']
+            wanted_keys = ['_id','title','artistname','image','year','style','genre', 'image_size_data']
         return {key:meta_data[key] if key in meta_data else None for key in wanted_keys}
 
 
@@ -162,21 +174,21 @@ def image_html_fn(url):
 if __name__=="__main__":
 
     # Retrieve one painting as example
-    # page_url = "https://www.wikiart.org/en/raphael/vision-of-a-knight"
+    page_url = "https://www.wikiart.org/en/raphael/vision-of-a-knight"
     # page_url = "https://www.wikiart.org/en/hans-von-aachen/self-portrait-1574"
-    page_url = "https://www.wikiart.org/en/giovanni-bellini/the-feast-of-the-gods-1514"
+    # page_url = "https://www.wikiart.org/en/giovanni-bellini/the-feast-of-the-gods-1514"
 
     print("Default metadata:")
 
-    print(get_meta_data(page_url))
+    print(json.dumps(get_meta_data(page_url),indent=4, sort_keys=False))
 
     print("All metadata:")
 
-    print(get_meta_data(page_url,wanted_keys="all"))
+    print(json.dumps(get_meta_data(page_url,wanted_keys="all"), indent=4, sort_keys=False))
 
-    url_image=image_html_fn(page_url)
+    # url_image=image_html_fn(page_url)
 
-    print(url_image)
+    # print(url_image)
 
     # file_name='sample.jpg'
 
