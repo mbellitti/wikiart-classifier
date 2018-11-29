@@ -95,8 +95,8 @@ def save_csv(file_name, N_rows=None, N_rows_start = 0, file_url_list='artworks_u
 if __name__ == '__main__':
     chunk_size = 3000
     file_url_list='artworks_urls_full.pkl'
-    len_url_list = -1 ###
-    chunk_to_start_with = 1
+    len_url_list = -1                  # -1 for full run, otherwise test length
+    chunk_to_start_with = 1            # set to 1 for full run
 
     if len_url_list == -1:
         with open('../data/'+file_url_list, 'rb') as f:
@@ -106,11 +106,13 @@ if __name__ == '__main__':
 
     chunk_borders = list(range(0,len_url_list, chunk_size))
     chunk_borders.append(len_url_list)
+    num_chunks = len(chunk_borders) -1
 
+    # loop through chunks
     start = time.time()
-    for chunk_id in range(chunk_to_start_with, len(chunk_borders)-1):
+    for chunk_id in range(chunk_to_start_with -1, num_chunks):
         run_time = save_csv(
-            "database{0}of{1}.csv".format(chunk_id +1, len(chunk_borders)-1),
+            "database{0}of{1}.csv".format(chunk_id +1, num_chunks),
             N_rows_start = chunk_borders[chunk_id], N_rows = chunk_borders[chunk_id +1])
     end = time.time()
     total_time = end - start
