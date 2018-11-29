@@ -90,5 +90,5 @@ def save_csv(file_name, N_rows=None, file_url_list='artworks_urls_full.pkl', pro
     pd.DataFrame(list_data).to_csv("database.csv",index=False)
     return end-start
 if __name__ == '__main__':
-    total_time = save_csv("database.csv",100)
+    total_time = save_csv("database.csv")
     print('downloading time: {:.1f}s'.format(total_time))
