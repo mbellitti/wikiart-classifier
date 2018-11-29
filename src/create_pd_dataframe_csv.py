@@ -19,7 +19,10 @@ def job(url):
             [None, None]
             additionaly writes url to extra file."""
 
+    from urllib.parse import urlparse
     try:
+        if urlparse(url).netloc.split('.')[-1] != 'org':
+            raise TypeError("Nonvalid url: top level domain is not '.org': {}".format(url))
         return [get_meta_data(url), None]
     except requests.exceptions.RequestException as e:
         print('############Connection Error#########')
@@ -31,7 +34,7 @@ def job(url):
         f.close()
         return [None, None]
 
-def save_csv(file_name, N_rows=None, file_url_list='artworks_urls_full.pkl', processes = 8):
+def save_csv(file_name, N_rows=None, N_rows_start = 0, file_url_list='artworks_urls_full.pkl', processes = 8):
     """Downloads all the metadata in the pickled url list and saves to csv.
 
     Arguments:
@@ -54,7 +57,7 @@ def save_csv(file_name, N_rows=None, file_url_list='artworks_urls_full.pkl', pro
         if N_rows is None:
             url_list = pickle.load(f)
         else:
-            url_list = pickle.load(f)[:N_rows]
+            url_list = pickle.load(f)[N_rows_start:N_rows]
     pool = Pool(processes=processes)
 
     start = time.time()
@@ -86,9 +89,30 @@ def save_csv(file_name, N_rows=None, file_url_list='artworks_urls_full.pkl', pro
         print(len(missed_urls))
 
     end = time.time()
+    pd.DataFrame(list_data).to_csv(file_name,index=False)
 
-    pd.DataFrame(list_data).to_csv("database.csv",index=False)
     return end-start
 if __name__ == '__main__':
-    total_time = save_csv("database.csv")
+    chunk_size = 3000
+    file_url_list='artworks_urls_full.pkl'
+    len_url_list = -1 ###
+    chunk_to_start_with = 1
+
+    if len_url_list == -1:
+        with open('../data/'+file_url_list, 'rb') as f:
+            url_list = pickle.load(f)
+            len_url_list = len(url_list)
+            del url_list
+
+    chunk_borders = list(range(0,len_url_list, chunk_size))
+    chunk_borders.append(len_url_list)
+
+    start = time.time()
+    for chunk_id in range(chunk_to_start_with, len(chunk_borders)-1):
+        run_time = save_csv(
+            "database{0}of{1}.csv".format(chunk_id +1, len(chunk_borders)-1),
+            N_rows_start = chunk_borders[chunk_id], N_rows = chunk_borders[chunk_id +1])
+    end = time.time()
+    total_time = end - start
+
     print('downloading time: {:.1f}s'.format(total_time))
