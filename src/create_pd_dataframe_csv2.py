@@ -39,11 +39,13 @@ def save_csv(file_name, N_rows=None, file_url_list='artworks_urls_full.pkl', pro
         else:
             url_list = pickle.load(f)[:N_rows]
     pool = Pool(processes=processes)
+
     start = time.time()
     data = pool.map(job, url_list)
     list_data = [i[0] for i in data if i[0] != None]
     missed_urls = [i[1] for i in data if i[1] != None]
     del data
+
     while len(missed_urls) >0:
         data = pool.map(job, missed_urls)
         list_data_add = [i[0] for i in data if i[0] != None]
@@ -58,8 +60,8 @@ def save_csv(file_name, N_rows=None, file_url_list='artworks_urls_full.pkl', pro
     return end-start
 if __name__ == '__main__':
     times = []
-    processes = range(3,16,2)
+    processes = range(4,17,2)
     for i in processes:
-        times.append(save_csv("database.csv", 100, processes = i))
+        times.append(save_csv("database.csv", 1000, processes = i))
     plt.plot(processes, times)
     plt.show()
