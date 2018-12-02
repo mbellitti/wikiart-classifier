@@ -84,7 +84,7 @@ def get_meta_data(url,wanted_keys=None):
         }
     """
 
-    print("Retrieving "+url)
+    # print("Retrieving "+url)
 
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'lxml')

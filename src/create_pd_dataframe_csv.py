@@ -1,4 +1,6 @@
 import pickle
+import sys
+from tqdm import tqdm
 import pandas as pd
 from image_scraper import *
 from multiprocessing import Pool
@@ -25,7 +27,7 @@ def job(url):
             raise TypeError("Nonvalid url: top level domain is not '.org': {}".format(url))
         return [get_meta_data(url), None]
     except requests.exceptions.RequestException as e:
-        print('############Connection Error#########')
+        # print('############Connection Error#########')
         return [None, url]
     except TypeError:
         filename = 'problematic_urls.txt'
@@ -72,31 +74,37 @@ def save_csv(file_name, N_rows=None, N_rows_start = 0, file_url_list='artworks_u
     data = pool.map(job, url_list)
     list_data = [i[0] for i in data if i[0] != None]
     missed_urls = [i[1] for i in data if i[1] != None]
-    print(len(list_data))
-    print(len(missed_urls))
+    # print("Successful:",len(list_data))
+    # print("Errors: ",len(missed_urls))
     del data
 
     # redo all missed urls until no one is left behind
     while len(missed_urls) >0:
-        print('another round')
+        # print('another round')
         data = pool.map(job, missed_urls)
         list_data_add = [i[0] for i in data if i[0] != None]
         missed_urls = [i[1] for i in data if i[1] != None]
         del data
         list_data.extend(list_data_add)
         del list_data_add
-        print(len(list_data))
-        print(len(missed_urls))
+        # print("Successful:",len(list_data))
+        # print("Errors: ",len(missed_urls))
 
     end = time.time()
     pd.DataFrame(list_data).to_csv(file_name,index=False)
 
+    pool.close()
+
     return end-start
+
 if __name__ == '__main__':
-    chunk_size = 3000
+    chunk_size = 100
     file_url_list='artworks_urls_full.pkl'
     len_url_list = -1                  # -1 for full run, otherwise test length
     chunk_to_start_with = 1            # set to 1 for full run
+
+    if len(sys.argv) > 0:
+        chunk_to_start_with = int(sys.argv[1])
 
     if len_url_list == -1:
         with open('../data/'+file_url_list, 'rb') as f:
@@ -110,10 +118,10 @@ if __name__ == '__main__':
 
     # loop through chunks
     start = time.time()
-    for chunk_id in range(chunk_to_start_with -1, num_chunks):
+    for chunk_id in tqdm(range(chunk_to_start_with -1, num_chunks)):
         run_time = save_csv(
-            "database{0}of{1}.csv".format(chunk_id +1, num_chunks),
-            N_rows_start = chunk_borders[chunk_id], N_rows = chunk_borders[chunk_id +1])
+            "database/database{0}of{1}.csv".format(chunk_id +1, num_chunks),
+            N_rows_start = chunk_borders[chunk_id], N_rows = chunk_borders[chunk_id +1],processes=4)
     end = time.time()
     total_time = end - start
 
