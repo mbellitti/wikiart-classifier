@@ -1,15 +1,11 @@
-<<<<<<< HEAD
 """This script definies a flow_from_dataframe_remote method, that can be
-=======
-"""this script definies a flow_from_dataframe_remote method, that can be
->>>>>>> 8691cd3b663f16241a32863228d50c4db85e8d79
 activated in any other script by executing this file.
 """
 import os
 import os.path
+import io
 from keras import preprocessing
 from keras_preprocessing.image import *
-<<<<<<< HEAD
 from PIL import Image
 
 def fetch_image(path, img_url):
@@ -31,7 +27,7 @@ def fetch_image(path, img_url):
         response = requests.get(img_url,stream=True)
         if response.status_code == 200:
             img_raw = response.content
-            img = pil_image.open(BytesIO(img_raw))
+            img = Image.open(io.BytesIO(img_raw))
             if save_img_locally == True:
                 with open(file_name, 'wb') as f:
                     f.write(img)
@@ -42,12 +38,6 @@ def fetch_image(path, img_url):
 def load_img_remote(path, url, save_img_locally = False, grayscale=False, color_mode='rgb', target_size=None,
              interpolation='nearest', save_img = False):
     """Loads an image into PIL format. A path and an url must be given. If the
-=======
-
-def load_img_remote(path, url, grayscale=False, color_mode='rgb', target_size=None,
-             interpolation='nearest', save_img = False):
-    """Loads an image into PIL format.
->>>>>>> 8691cd3b663f16241a32863228d50c4db85e8d79
     # Arguments
         path: Path to image file.
         color_mode: One of "grayscale", "rgb", "rgba". Default: "rgb".
@@ -76,12 +66,7 @@ def load_img_remote(path, url, grayscale=False, color_mode='rgb', target_size=No
                           'The use of `array_to_img` requires PIL.')
     ###change method to fetch image!
     #img_raw is the output of response.content of the image url
-<<<<<<< HEAD
-    img_raw = fetch_image(path, url)
-=======
-    img_raw = ############
->>>>>>> 8691cd3b663f16241a32863228d50c4db85e8d79
-    img = pil_image.open(BytesIO(img_raw))
+    img = fetch_image(path, url)
     if color_mode == 'grayscale':
         if img.mode != 'L':
             img = img.convert('L')
@@ -108,12 +93,8 @@ def load_img_remote(path, url, grayscale=False, color_mode='rgb', target_size=No
 
 
 def flow_from_dataframe_remote(self, dataframe, directory,
-<<<<<<< HEAD
                         x_col="_id", url_col="image", y_col="class", #has_ext=True,
                         save_img_locally = False,
-=======
-                        x_col="filename", y_col="class", has_ext=True,
->>>>>>> 8691cd3b663f16241a32863228d50c4db85e8d79
                         target_size=(256, 256), color_mode='rgb',
                         classes=None, class_mode='categorical',
                         batch_size=32, shuffle=True, seed=None,
@@ -132,7 +113,6 @@ def flow_from_dataframe_remote(self, dataframe, directory,
             images in a column and classes in another or column/s
             that can be fed as raw target data.
         directory: string, path to the target directory that contains all
-<<<<<<< HEAD
             the images mapped in the dataframe that are saved locally.
             This directory will also be the directory where downloaded images
             may be stored.
@@ -146,13 +126,6 @@ def flow_from_dataframe_remote(self, dataframe, directory,
         y_col: string or list of strings,columns in
             the dataframe that will be the target data.
         save_img_locally: flags if downloaded images will be saved locally
-=======
-            the images mapped in the dataframe.
-        x_col: string, column in the dataframe that contains
-            the filenames of the target images.
-        y_col: string or list of strings,columns in
-            the dataframe that will be the target data.
->>>>>>> 8691cd3b663f16241a32863228d50c4db85e8d79
         target_size: tuple of integers `(height, width)`, default: `(256, 256)`.
             The dimensions to which all images found will be resized.
         color_mode: one of "grayscale", "rgb". Default: "rgb".
@@ -207,14 +180,9 @@ def flow_from_dataframe_remote(self, dataframe, directory,
     """
 
     return DataFrameIterator_remote(dataframe, directory, self,
-<<<<<<< HEAD
                              x_col=x_col, url_col=url_col, y_col=y_col,
                              #has_ext=has_ext, #removed for remote use
                              save_img_locally = save_img_locally,
-=======
-                             x_col=x_col, y_col=y_col,
-                             #has_ext=has_ext, #removed for remote use
->>>>>>> 8691cd3b663f16241a32863228d50c4db85e8d79
                              target_size=target_size, color_mode=color_mode,
                              classes=classes, class_mode=class_mode,
                              data_format=self.data_format,
@@ -243,17 +211,11 @@ class DataFrameIterator_remote(Iterator):
             to use for random transformations and normalization.
         x_col: Column in dataframe that contains all the filenames (or absolute
             paths, if directory is set to None).
-<<<<<<< HEAD
         url_col: string, column in the dataframe that contains the url of the
             target images. From there the images will be downloaded if they
             aren't found locally.
         y_col: Column/s in dataframe that has the target data.
         save_img_locally: flags if downloaded images will be saved locally
-=======
-        y_col: Column/s in dataframe that has the target data.
-        z_col: Column in dataframe that has the url of the file
-        has_ext: bool, Whether the filenames in x_col has extensions or not.
->>>>>>> 8691cd3b663f16241a32863228d50c4db85e8d79
         target_size: tuple of integers, dimensions to resize input images to.
         color_mode: One of `"rgb"`, `"rgba"`, `"grayscale"`.
             Color mode to read images.
@@ -292,14 +254,9 @@ class DataFrameIterator_remote(Iterator):
         drop_duplicates: Boolean, whether to drop duplicate rows based on filename.
     """self.fail('message')
     def __init__(self, dataframe, directory, image_data_generator,
-<<<<<<< HEAD
                  x_col="filenames", y_col="class", url_col = "url",
                  #has_ext=True, #removed for remote use
                  save_img_locally = False,
-=======
-                 x_col="filenames", y_col="class", z_col = "url",
-                 #has_ext=True, #removed for remote use
->>>>>>> 8691cd3b663f16241a32863228d50c4db85e8d79
                  target_size=(256, 256), color_mode='rgb',
                  classes=None, class_mode='categorical',
                  batch_size=32, shuffle=True, seed=None,
@@ -326,7 +283,6 @@ class DataFrameIterator_remote(Iterator):
             raise ImportError('Install pandas to use flow_from_dataframe.')
         if type(x_col) != str:
             raise ValueError("x_col must be a string.")
-<<<<<<< HEAD
         if type(y_col) != str:
             raise ValueError("y_col must be a string.")
         if type(url_col) != str:
@@ -334,11 +290,6 @@ class DataFrameIterator_remote(Iterator):
         #if type(has_ext) != bool:
         #    raise ValueError("has_ext must be either True if filenames in"
         #                     " x_col has extensions,else False.")
-=======
-        if type(has_ext) != bool:
-            raise ValueError("has_ext must be either True if filenames in"
-                             " x_col has extensions,else False.")
->>>>>>> 8691cd3b663f16241a32863228d50c4db85e8d79
         self.df = dataframe.copy()
         if drop_duplicates:
             self.df.drop_duplicates(x_col, inplace=True)
@@ -346,10 +297,7 @@ class DataFrameIterator_remote(Iterator):
         self.df[x_col] = self.df[x_col].astype(str)
         self.directory = directory
         self.classes = classes
-<<<<<<< HEAD
         self.safe_img_locally = save_img_locally
-=======
->>>>>>> 8691cd3b663f16241a32863228d50c4db85e8d79
         if class_mode not in {'categorical', 'binary', 'sparse',
                               'input', 'other', None}:
             raise ValueError('Invalid class_mode:', class_mode,
@@ -360,10 +308,7 @@ class DataFrameIterator_remote(Iterator):
         self.dtype = dtype
         white_list_formats = {'png', 'jpg', 'jpeg', 'bmp',
                               'ppm', 'tif', 'tiff'}
-<<<<<<< HEAD
 
-=======
->>>>>>> 8691cd3b663f16241a32863228d50c4db85e8d79
         # First, count the number of samples and classes.
         self.samples = 0
 
@@ -434,10 +379,7 @@ class DataFrameIterator_remote(Iterator):
                 img_path = fname
             #here we have to include the routine to fetch the picture#########
             img = load_img_remote(img_path, url,
-<<<<<<< HEAD
                             safe_img_locally = safe_img_locally,
-=======
->>>>>>> 8691cd3b663f16241a32863228d50c4db85e8d79
                            color_mode=self.color_mode,
                            target_size=self.target_size,
                            interpolation=self.interpolation)
