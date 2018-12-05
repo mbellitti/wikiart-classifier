@@ -2,5 +2,5 @@
 
 while read p; do
     wget -c -O $p
-done <img_urls.txt
+done <missing_img_urls.txt
 
