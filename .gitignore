@@ -52,3 +52,6 @@ docs/_build/
 
 # Large files
 *.csv
+/data/images_large/
+/data/images_pinterestsmall/
+/src/images/
