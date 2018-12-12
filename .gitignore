@@ -52,3 +52,5 @@ docs/_build/
 
 # Large files
 *.csv
+*.zip
+/src/images/
