@@ -55,3 +55,4 @@ docs/_build/
 /data/images_large/
 /data/images_pinterestsmall/
 /src/images/
+*.zip
