@@ -30,6 +30,11 @@ def create_generators(nrows,img_size,feature="style",batch_size=32):
 
     # Split the data in train/test/validation
     df = pd.read_csv("../data/db.csv",nrows=nrows,na_values="?")
+
+    # Keep only the highest tag in hierarchy: "abstract, cubism" -> "abstract"
+    df[feature].map(lambda s: str(s).split(",")[0].strip()).describe()
+    print("Warning: keeping only highest level tags")
+
     df_train, df_test = train_test_split(df, test_size=0.2,shuffle=True)
 
     classes = set(df[feature])
@@ -126,9 +131,18 @@ if __name__ == '__main__':
     nrows = 1000
     epochs = 2
 
+    # Max number of processes to spin up in parallel
+    workers = 4
+
+    # What label do we want to predict?
+    feature = "genre"
+
     # Loading data and create generators
     nclass, train_generator, validation_generator, test_generator = \
-        create_generators(nrows,img_size,feature="style",batch_size=batch_size)
+            create_generators(nrows,
+                              img_size,
+                              feature=feature,
+                              batch_size=batch_size)
 
     # Create the CNN
     model = cnn_layers_fn(nclass)
@@ -143,7 +157,7 @@ if __name__ == '__main__':
                     generator=train_generator,
                     validation_data=validation_generator,
                     epochs=epochs,
-                    workers=4,
+                    workers=workers,
                     use_multiprocessing=True)
 
     t_end = time.time()
@@ -158,9 +172,13 @@ if __name__ == '__main__':
     f.write("epochs=%d, running time={}d {}h {}m {}s \n".format(d,h,m,s))
     f.write('"train acc" \t \t "val acc"  \t \t "train loss" \t \t "val loss" \n')
 
-    np.savetxt(f, np.transpose([ history.history['acc'],history.history['val_acc'], history.history['loss'], history.history['val_loss']]) , fmt='%.18f', delimiter='\t')
+    np.savetxt(f, np.transpose([history.history['acc'],history.history['val_acc'], history.history['loss'], history.history['val_loss']]) , fmt='%.18f', delimiter='\t')
     f.close()
 
     # Test
-    test_stat = model.evaluate_generator(generator=test_generator)
+    test_stat = model.evaluate_generator(
+                        generator=test_generator,
+                        workers=workers,
+                        use_multiprocessing=True)
+
     test_results = dict(zip(model.metrics_names,test_stat))
