@@ -15,7 +15,7 @@ module load tensorflow/r1.10
 
 # NROWS=30
 # SEED=42
-DATADIR="~/ml/wikiart-classifier/data"
+DATADIR="~/wikiart-classifier/data"
 
 telegram_notify "Running: $JOB_ID"
 

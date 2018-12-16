@@ -8,8 +8,32 @@ from keras.applications.vgg16 import VGG16
 from keras_preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 import time
+import os
+import tensorflow as tf
+import keras.backend.tensorflow_backend ad ktf
 
+# On the cluster, NSLOTS is the number of cores requested
+# with -pe omp=NSLOTS
+def get_n_cores():
+    if nslots is not None:
+      return int(nslots)
+    raise ValueError('Environment variable NSLOTS is not defined.')
 
+def get_session():
+    try:
+        nthreads = get_n_cores() - 1
+        if nthreads >= 1:
+            session_conf = tf.ConfigProto(
+                intra_op_parallelism_threads=nthreads,
+                inter_op_parallelism_threads=1,
+                allow_soft_placement=True)
+            return tf.Session(config=session_conf)
+    except:
+        sys.stderr.write('NSLOTS is not set, using default Tensorflow session.\n')
+        sys.stderr.flush()
+    return ktf.get_session()
+
+ktf.set_session(get_session())
 
 def create_generators(nrows,img_size,feature="style",batch_size=32):
     """ Creates training and validation data generators.
