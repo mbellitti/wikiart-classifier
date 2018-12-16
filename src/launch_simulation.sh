@@ -11,6 +11,7 @@
 # Available Memory: 64, 128, 192, 256, 512, or 1024
 
 module load python/3.6.2
+<<<<<<< HEAD
 module load tensorflow/r1.10
 
 # NROWS=30
