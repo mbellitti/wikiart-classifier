@@ -51,6 +51,7 @@ def create_generators(nrows,img_size,feature="style",batch_size=32):
             # TODO: need to think about featurewise normalization vs samplewise normalization
 
 
+    print("Training set:")
     train_generator = train_datagen.flow_from_dataframe(df_train,
                                     directory="../data/images/",
                                     x_col="_id",
@@ -62,6 +63,7 @@ def create_generators(nrows,img_size,feature="style",batch_size=32):
                                     classes=classes)
 
 
+    print("Validation set:")
     validation_generator = train_datagen.flow_from_dataframe(df_train,
                                     directory="../data/images/",
                                     x_col="_id",
@@ -78,6 +80,7 @@ def create_generators(nrows,img_size,feature="style",batch_size=32):
             rescale=1/255)
             # TODO: need to think about featurewise normalization vs samplewise normalization
 
+    print("Test set:")
     test_generator = test_datagen.flow_from_dataframe(df_test,
                                     directory="../data/images/",
                                     x_col="_id",
@@ -129,7 +132,8 @@ if __name__ == '__main__':
     img_size = (48,48)#(32,32)#(224, 224)#
     batch_size = 32
     nrows = 1000
-    epochs = 2
+    # nrows = None # whole dataset
+    epochs = 1
 
     # Max number of processes to spin up in parallel
     workers = 4
