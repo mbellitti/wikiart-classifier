@@ -4,9 +4,9 @@
 #$ -l mem_per_core=2G
 #$ -l h_rt=01:00:00
 #$ -o /scratch/output.out
-#$ -pe omp 4
+#$ -pe omp 1
 #$ -l gpu_c=3.5
-#$ -l gpus=0.25
+#$ -l gpus=1
 
 # Available Memory: 64, 128, 192, 256, 512, or 1024
 
