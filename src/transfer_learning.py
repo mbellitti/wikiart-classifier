@@ -8,9 +8,10 @@ from keras.applications.vgg16 import VGG16
 from keras_preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 import time
+import sys
 import os
 import tensorflow as tf
-import keras.backend.tensorflow_backend ad ktf
+import keras.backend.tensorflow_backend as ktf
 
 # On the cluster, NSLOTS is the number of cores requested
 # with -pe omp=NSLOTS
@@ -156,13 +157,16 @@ if __name__ == '__main__':
 
     img_size = (48,48)#(32,32)#(224, 224)#
     batch_size = 32
-    nrows = 1000
+    nrows = 100
     # nrows = None # whole dataset
     epochs = 1
+    steps_per_epoch = nrows//batch_size
 
     # Max number of processes to spin up in parallel
     nslots = os.getenv('NSLOTS')
-    workers = nslots
+    workers = int(nslots) if nslots is not None else 1
+
+    print("Multiprocessing: {} workers available".format(workers))
 
     # What label do we want to predict?
     feature = "genre"
@@ -180,6 +184,7 @@ if __name__ == '__main__':
     model.compile(optimizers.rmsprop(lr=0.0001, decay=1e-6),
                 loss="categorical_crossentropy",metrics=["accuracy"])
 
+
     # Train
     t_in=time.time()
 
@@ -188,6 +193,7 @@ if __name__ == '__main__':
                     validation_data=validation_generator,
                     epochs=epochs,
                     workers=workers,
+                    steps_per_epoch=steps_per_epoch,
                     use_multiprocessing=True)
 
     t_end = time.time()
@@ -198,17 +204,33 @@ if __name__ == '__main__':
     print("Finished training in {}d {}h {}m {}s".format(d,m,h,s))
 
     # Saving the history to see how well model is performing
+    print("Saving traning history...",end=" ",flush=True)
     f=open('../data/loss_accuracy.dat', 'w')
     f.write("epochs=%d, running time={}d {}h {}m {}s \n".format(d,h,m,s))
     f.write('"train acc" \t \t "val acc"  \t \t "train loss" \t \t "val loss" \n')
 
     np.savetxt(f, np.transpose([history.history['acc'],history.history['val_acc'], history.history['loss'], history.history['val_loss']]) , fmt='%.18f', delimiter='\t')
     f.close()
+    print("Done.")
 
     # Test
+    print("Evaluating on test set...", end=" ",flush=True)
     test_stat = model.evaluate_generator(
                         generator=test_generator,
                         workers=workers,
                         use_multiprocessing=True)
+    print("Done.")
 
     test_results = dict(zip(model.metrics_names,test_stat))
+
+    print("Saving test results...", end=" ",flush=True)
+    with open("../data/final_test_score.txt",'w') as f:
+        for metric in test_results:
+            f.write("{}: {}\n".format(metric,test_results[metric]))
+
+    print("Done.")
+
+    # save model, including weights
+    print("Saving model...", end=" ",flush=True)
+    model.save("../data/model.h5")
+    print("Done.")

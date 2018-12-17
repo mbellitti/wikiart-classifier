@@ -13,6 +13,9 @@
 module load python/3.6.2
 module load tensorflow/r1.10
 
+# Suppress TensorFlow complaints about irrelevant things
+export TF_CPP_MIN_LOG_LEVEL=2
+
 # NROWS=30
 # SEED=42
 DATADIR="~/wikiart-classifier/data"
