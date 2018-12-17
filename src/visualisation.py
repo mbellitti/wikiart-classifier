@@ -107,70 +107,72 @@ def load_image(path, target_size = None):
     x = preprocess_input(x)
     return x
 
-image_path = "images/"
-df_column_label = '_id'
+if __name__ == '__main__':
 
-# arguments for data selection
-size = 300
-column = 'artistname'
-criterium = ['michelangelo', 'lyonel']
+    # arguments for data selection
+    size = 300                              # number of visiualised images
+    column = 'artistname'                   # which column to search for criterium
+    criterium = ['michelangelo', 'lyonel']  # search criterium (str or list of strs)
 
-#
-plot_PCA = False
-plot_tSNE = True
-save_filepath = 'michelangelo_feininger_test'
+    # plot and save settings
+    plot_PCA = False
+    plot_tSNE = True
+    save_filepath = 'michelangelo_feininger_test'
 
-#  arguments and hyper parameters for PCA and t-SNE
-PCA_components = 50
-tSNE_components = 2
-early_exaggeration = 30
-perplexity = 10
-learning_rate = 100
+    #  arguments and hyper parameters for PCA and t-SNE
+    PCA_components = 50        #t-SNE will be calculated using this projection
+    tSNE_components = 2
+    early_exaggeration = 30
+    perplexity = 10
+    learning_rate = 100
 
-# settings of ouput picture:
-width = 3000
-height = 2200
-max_dim = 150
+    # settings of ouput picture:
+    width = 3000
+    height = 2200
+    max_dim = 150                           # maximum size of displayed tiles
+
+    # arguments
+    image_path = "images/"
+    df_column_label = '_id'
 
 
+    # load metadata
+    df = pd.read_csv("../data/db.csv",nrows=None,na_values="?")
 
-#load metadata
-df = pd.read_csv("../data/db.csv",nrows=None,na_values="?")
+    # create selection dataframe
+    df_sel = get_selection(df, size = size, column = column, criterium = criterium)
 
-#create selection dataframe
-df_sel = get_selection(df, size = size, column = column, criterium = criterium)
+    # create feature extractor
+    model = VGG16(weights='imagenet', include_top=True)
+    feat_extractor = Model(inputs=model.input, outputs=model.get_layer("fc2").output)
 
-#create feature extractor
-model = VGG16(weights='imagenet', include_top=True)
-feat_extractor = Model(inputs=model.input, outputs=model.get_layer("fc2").output)
+    # create feature vectors
+    fvs = []
+    for i in range(len(df_sel)):        # is slow and could be parallelized
+        if i %10 == 0:
+            print('extracting feature vector of image {0} of {1}'.format(i+1, len(df_sel)))
+        x = load_image(image_path + df_sel['_id'].iloc[i] + '.jpg',
+            target_size = feat_extractor.input_shape[1:3])
+        fv = feat_extractor.predict(x)[0]
+        fvs.append(fv)
+    print('done')
+    fvs = np.array(fvs)
 
-#create feature vectors
-fvs = []
-for i in range(len(df_sel)):
-    if i %10 == 0:
-        print('extracting feature vector of image {0} of {1}'.format(i+1, len(df_sel)))
-    x = load_image(image_path + df_sel['_id'].iloc[i] + '.jpg',
-        target_size = feat_extractor.input_shape[1:3])
-    fv = feat_extractor.predict(x)[0]
-    fvs.append(fv)
-print('done')
-fvs = np.array(fvs)
-
-#perform PCA to get dimensions down for t-SNE
-#For PCA we only need 2 components but we will use this representation for t-SNE
-modelPCA = PCA(n_components=PCA_components)
-XPCA = modelPCA.fit_transform(fvs)
-
-if plot_PCA == True:
-    save_filepath_PCA = save_filepath + '_PCA.png'
-    create_visualisation(XPCA, image_path, def_sel[df_column_label], save_filepath_PCA,
-                width = 3000, height = 2200, maxdim = 150)
-#perform t-SNE
-myTSNE = TSNE(n_components = tSNE_components,
-    early_exaggeration = early_exaggeration, perplexity = perplexity,
-    learning_rate = learning_rate)
-XTSNE = myTSNE.fit_transform(XPCA)
-if plot_tSNE == True:
-    save_filepath_tSNE = save_filepath + '_tSNE.png'
-    create_visualisation(XPCA, image_path, df_sel[df_column_label], save_filepath_tSNE,
-                width = 3000, height = 2200, maxdim = 150)
+    # perform PCA to get dimensions down for t-SNE
+    modelPCA = PCA(n_components=PCA_components)
+    XPCA = modelPCA.fit_transform(fvs)
+    # plot PCA visualisation
+    if plot_PCA == True:
+        save_filepath_PCA = save_filepath + '_PCA.png'
+        create_visualisation(XPCA, image_path, def_sel[df_column_label], save_filepath_PCA,
+                    width = 3000, height = 2200, maxdim = 150)
+    # perform t-SNE
+    myTSNE = TSNE(n_components = tSNE_components,
+        early_exaggeration = early_exaggeration, perplexity = perplexity,
+        learning_rate = learning_rate)
+    XTSNE = myTSNE.fit_transform(XPCA)
+    # plot t-SNE visualisation
+    if plot_tSNE == True:
+        save_filepath_tSNE = save_filepath + '_tSNE.png'
+        create_visualisation(XPCA, image_path, df_sel[df_column_label], save_filepath_tSNE,
+                    width = 3000, height = 2200, maxdim = 150)
