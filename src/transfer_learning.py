@@ -160,7 +160,6 @@ if __name__ == '__main__':
     nrows = 100
     # nrows = None # whole dataset
     epochs = 1
-    steps_per_epoch = nrows//batch_size
 
     # Max number of processes to spin up in parallel
     nslots = os.getenv('NSLOTS')
@@ -188,12 +187,15 @@ if __name__ == '__main__':
     # Train
     t_in=time.time()
 
+    # FIXME: give a more meaningful value to validation_steps
+
     history = model.fit_generator(
                     generator=train_generator,
                     validation_data=validation_generator,
+                    validation_steps=len(validation_generator),
                     epochs=epochs,
+                    steps_per_epoch=len(train_generator),
                     workers=workers,
-                    steps_per_epoch=steps_per_epoch,
                     use_multiprocessing=True)
 
     t_end = time.time()
@@ -218,6 +220,7 @@ if __name__ == '__main__':
     test_stat = model.evaluate_generator(
                         generator=test_generator,
                         workers=workers,
+                        steps=len(test_generator),
                         use_multiprocessing=True)
     print("Done.")
 
