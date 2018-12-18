@@ -31,26 +31,27 @@ This was done as part of final project for the Fall 2018 class
 * [What we are offering](#What-we-are-2offering)
 
 
-# Data 
+# **Data** 
 
 We have XXX number of images which have so many labels.  The source of the images and metadata is
 [WikiArt](https://www.wikiart.org/). 
 
  
 
-# Network Architecture
+# **Network Architecture**
 
 We use Deep Neural Network to classify images. Specifically, our network is Convolutional Neural Network, whose first layer is a pre-trained layer (VGG16) followed by dense sets and at the end a softmax classifier.
 
 
 
-#What we did
+# **What we did**
+
+hiaods
 
 
 
 
-
-# What we are offering
+# **What we are offering**
 
 - Image-scraper that works for WikiArt but can be extended for other websites too
 - A GPU trained CNN on wiki-art
