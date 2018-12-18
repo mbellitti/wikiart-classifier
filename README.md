@@ -10,13 +10,13 @@ Images to be added:
 - Plot of accuracy as a function of epochs. 
 - Jan's PCA image
 
-<img caption="hello" width="172" height="90" src="https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/picasso_example500_PCA.png">
 
 ![PCA](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/picasso_example500_PCA.png)
- *PCA image*
+ _PCA of images of Picasso_
 
 
 ![tSNE](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/michelangelo_feininger_test_tSNE.png)
+_tSNE of images of Michelangelo_
 
 Footnote:
 In principle, we have data to run classificiation task on
@@ -28,7 +28,7 @@ In principle, we have data to run classificiation task on
 
 
 This was done as part of final project for the Fall 2018 class
-[Machine Learning for Physicists](https://physics.bu.edu/~pankajm/PY895-ML.html) held at BU.
+[Machine Learning for Physicists](https://physics.bu.edu/~pankajm/PY895-ML.html) held at Boston University.
 
 
 # **Contents**
