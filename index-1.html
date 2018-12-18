@@ -1,0 +1,58 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Unknown </title></head><body>
+<h1 id="a-wikiart-classifier">A Wikiart Classifier</h1>
+<p><strong>Authors</strong>: Jan Albrecht, Matteo Bellitti, Mohit Pandey</p>
+<p>This page is dedicate to the final project for the Fall 2018 class
+<a href="https://physics.bu.edu/~pankajm/PY895-ML.html">Machine Learning for Physicists</a> held at BU.</p>
+<h1 id="overview">Overview</h1>
+<p>The idea is to classify artworks into different styles, genres, and author using Deep Neural Networks.</p>
+<p>This is probably very ambitious. </p>
+<p>On this kind of data, in order of increasing data availability, we could
+try to classify:</p>
+<ul>
+<li>Century the artwork was realized</li>
+<li>Field (Painting, Sculpture, Photography)</li>
+<li>Genre (Abstract, Landscape, Portrait)</li>
+<li>Style (Cubism, Impressionism, Dadaism)</li>
+<li>Author</li>
+</ul>
+<h1 id="data">Data</h1>
+<h2 id="data-sources">Data sources</h2>
+<p>The source of the images and metadata is
+<a href="https://www.wikiart.org/">WikiArt</a>. The WikiArt project does not
+provide a precompiled dataset, so we will need to build our own by
+scraping the images and the labels we are interested in.</p>
+<p>At the very least we will need to collect the following features:</p>
+<ul>
+<li>Image</li>
+<li>Century</li>
+<li>Field</li>
+</ul>
+<p>it would also be interesting to deal with</p>
+<ul>
+<li>Style</li>
+<li>Date (difficulty: often approximate and not in standard format)</li>
+<li>Genre (difficulty: paintings in the same genre can be visually
+  very different)</li>
+<li>Author </li>
+</ul>
+<h2 id="preprocessing">Preprocessing</h2>
+<p>The labels must be properly formatted and deduplicated, but most of
+this work has already been done by the people on WikiArt.</p>
+<p>The images will need more preprocessing:</p>
+<ul>
+<li>Image resolution should be made homogeneous</li>
+<li>Pixel values need to be normalized </li>
+</ul>
+<h2 id="data-augmentation">Data Augmentation</h2>
+<p>Many artists have less than 20 artworks, so if we want to perform
+with acceptable results on the Author classification task we need
+to exploit data augmentation as much as possible.</p>
+<p>The situation is less dire for the top 10 Genres, but we still risk
+overfitting. </p>
+<h1 id="network-architecture">Network Architecture</h1>
+<p>We are dealing with image data, so we will heavily use
+Convolutional Neural Network, but the detailed network architecture
+has not been defined yet.</p>
+<h1 id="timeline">Timeline</h1>
+<p>There is not an official deadline yet. The official end of Finals is on 2018-21-12.</p>
+</body></html>

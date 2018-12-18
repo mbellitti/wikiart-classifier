@@ -7,6 +7,13 @@ This page is dedicate to the final project for the Fall 2018 class
 
 # Overview
 
+We have built a classifier that classifies artwork into different genre (like Abstract, Landscape, Portrait). In principle, we have data to run classificiation task on
+
+- Century the artwork was realized
+- Field (Painting, Sculpture, Photography)
+- Style (Cubism, Impressionism, Dadaism)
+- Author
+
 The idea is to classify artworks into different styles, genres, and author using Deep Neural Networks.
 
 This is probably very ambitious. 
@@ -14,11 +21,15 @@ This is probably very ambitious.
 On this kind of data, in order of increasing data availability, we could
 try to classify:
 
-- Century the artwork was realized
-- Field (Painting, Sculpture, Photography)
-- Genre (Abstract, Landscape, Portrait)
-- Style (Cubism, Impressionism, Dadaism)
-- Author
+
+# What we are offering
+
+- Image-scraper that works for WikiArt but can be extended for other websites too
+- A GPU trained CNN on wiki-art
+- Data scraped from WikiArt (?)
+
+
+
 
 # Data 
 
@@ -64,10 +75,5 @@ overfitting.
 
 # Network Architecture
 
-We are dealing with image data, so we will heavily use
-Convolutional Neural Network, but the detailed network architecture
-has not been defined yet.
+We use Deep Neural Network to classify images. Specifically, our network is Convolutional Neural Network, whose first layer is a pre-trained layer (VGG16) followed by dense sets and at the end a softmax classifier.
 
-# Timeline
-
-There is not an official deadline yet. The official end of Finals is on 2018-21-12.
