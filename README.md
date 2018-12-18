@@ -26,9 +26,9 @@ This was done as part of final project for the Fall 2018 class
 # **Contents**
 --------
 * [Data](#Data)
-* [Network Architecture](#Network Architecture)
-* [What we did](#What we did)
-* [What we are offering](#What we are offering)
+* [Network Architecture](#Network-Architecture)
+* [What we did](#What-we-did)
+* [What we are offering](#What-we-are-2offering)
 
 
 # Data 
