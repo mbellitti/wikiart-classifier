@@ -10,7 +10,7 @@ Images to be added:
 - Plot of accuracy as a function of epochs. 
 - Jan's PCA image
 
-![PCA](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/picasso_example500_PCA.png?raw=true "Title PCA"))
+![PCA](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/picasso_example500_PCA.png?raw=true "Title PCA")
 
 ![tSNE](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/michelangelo_feininger_test_tSNE.png)
 
