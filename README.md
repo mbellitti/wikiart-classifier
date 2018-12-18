@@ -10,6 +10,8 @@ Images to be added:
 - Plot of accuracy as a function of epochs. 
 - Jan's PCA image
 
+<img caption="hello" width="172" height="90" src="https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/picasso_example500_PCA.png">
+
 ![PCA](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/picasso_example500_PCA.png)
  *PCA image*
 
