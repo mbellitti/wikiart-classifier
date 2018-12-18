@@ -2,8 +2,8 @@
 
 #$ -j y
 #$ -l mem_per_core=2G
-#$ -l h_rt=01:00:00
-#$ -o /scratch/output.out
+#$ -l h_rt=12:00:00
+# -o /scratch/output.out
 #$ -pe omp 1
 #$ -l gpu_c=3.5
 #$ -l gpus=1
@@ -22,8 +22,10 @@ DATADIR="~/wikiart-classifier/data"
 
 telegram_notify "Running: $JOB_ID"
 
-python /usr3/graduate/bellitti/wikiart-classifier/src/transfer_learning.py
+cd /usr3/graduate/bellitti/wikiart-classifier/src
 
-mv /scratch/output.out $DATADIR
+python transfer_learning.py
+
+# mv /scratch/output.out $DATADIR
 
 telegram_notify "Finished: $JOB_ID"
