@@ -1,6 +1,6 @@
 # A Wikiart Classifier
 
-**Authors**: Jan Albrecht, Matteo Bellitti, Mohit Pandey
+**Authors**: Jan Albrecht, Matteo Bellitti, [Mohit Pandey](https://github.com/mohitpandey92)
 
 
 # Overview
