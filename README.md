@@ -23,7 +23,12 @@ This was done as part of final project for the Fall 2018 class
 [Machine Learning for Physicists](https://physics.bu.edu/~pankajm/PY895-ML.html) held at BU.
 
 
-
+# **Contents**
+--------
+* [Data](#Data)
+* [Network Architecture](#Network Architecture)
+* [What we did](#What we did)
+* [What we are offering](#What we are offering)
 
 
 # Data 
