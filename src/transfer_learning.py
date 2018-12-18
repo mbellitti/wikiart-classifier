@@ -164,7 +164,7 @@ if __name__ == '__main__':
     batch_size = 32
     # nrows = 100
     nrows = None # whole dataset
-    epochs = 8
+    epochs = 16
 
     # Max number of processes to spin up in parallel
     nslots = os.getenv('NSLOTS')
