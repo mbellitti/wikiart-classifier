@@ -10,8 +10,9 @@ Images to be added:
 - Plot of accuracy as a function of epochs. 
 - Jan's PCA image
 
-![alt text](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/picasso_example500_PCA.png)
+![PCA](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/picasso_example500_PCA.png)
 
+![tSNE](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/michelangelo_feininger_test_tSNE.png)
 
 Footnote:
 In principle, we have data to run classificiation task on
@@ -72,4 +73,4 @@ tenserflow (should we mention tenserflow?)
 
 - Image-scraper that works for WikiArt but can be extended for other websites too
 - A GPU trained CNN on wiki-art (?)
-- Data scraped from WikiArt (?)
+- Data scraped from WikiArt (?)--Probably we might get in trouble if we put Wikiart data on our github since Wikiart actually "owns" the data.
