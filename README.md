@@ -6,7 +6,7 @@ Wikiart-Classifier is an open-source Python-based image classifier. It classifie
 
 We have achieved 45 % accuracy on test set with XXX number of images and XXX number of labels on them.
 
-*Images*
+Images to be added:
 -Plot of accuracy as a function of epochs. 
 -Jan's PCA image
 
@@ -46,7 +46,7 @@ We use Deep Neural Network to classify images. Specifically, our network is Conv
 
 # **What we did**
 
-We scraped images from [WikiArt](https://www.wikiart.org/) using [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/). Once we had all the images, we built a CNN using tranfer learning. We use a pre-trained neural network as our first layer.
+We scraped images from [WikiArt](https://www.wikiart.org/) using [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/). Once we had all the images, we built a CNN using transfer learning. We use a pre-trained neural network as our first layer.
 
 
 # **What packages we used**
