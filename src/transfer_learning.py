@@ -7,6 +7,7 @@ from keras.layers import Dense,GlobalAveragePooling2D
 from keras.applications.vgg16 import VGG16
 from keras_preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
+import pickle
 import time
 import sys
 import os
@@ -57,8 +58,12 @@ def create_generators(nrows,img_size,feature="style",batch_size=32):
     # Split the data in train/test/validation
     df = pd.read_csv("../data/db.csv",nrows=nrows,na_values="?")
 
+    # Do not train on missing values
+    print("Warning: dropping missing values from dataframe")
+    df.dropna(subset=[feature,],inplace=True)
+
     # Keep only the highest tag in hierarchy: "abstract, cubism" -> "abstract"
-    df[feature].map(lambda s: str(s).split(",")[0].strip()).describe()
+    df[feature] = df[feature].map(lambda s: str(s).split(",")[0].strip())
     print("Warning: keeping only highest level tags")
 
     df_train, df_test = train_test_split(df, test_size=0.2,shuffle=True)
@@ -155,11 +160,11 @@ def cnn_layers_fn(nclass):
 if __name__ == '__main__':
 
 
-    img_size = (48,48)#(32,32)#(224, 224)#
+    img_size = (256,256)
     batch_size = 32
-    nrows = 100
-    # nrows = None # whole dataset
-    epochs = 1
+    # nrows = 100
+    nrows = None # whole dataset
+    epochs = 8
 
     # Max number of processes to spin up in parallel
     nslots = os.getenv('NSLOTS')
@@ -180,7 +185,10 @@ if __name__ == '__main__':
     # Create the CNN
     model = cnn_layers_fn(nclass)
 
-    model.compile(optimizers.rmsprop(lr=0.0001, decay=1e-6),
+    # optimizer = optimizers.rmsprop(lr=0.0001, decay=1e-6)
+    optimizer = optimizers.Adam()
+
+    model.compile(optimizer=optimizer,
                 loss="categorical_crossentropy",metrics=["accuracy"])
 
 
@@ -233,7 +241,9 @@ if __name__ == '__main__':
 
     print("Done.")
 
-    # save model, including weights
     print("Saving model...", end=" ",flush=True)
     model.save("../data/model.h5")
+
+    with open("../data/classes.pkl", 'wb') as f:
+            pickle.dump(train_generator.class_indices,f)
     print("Done.")
