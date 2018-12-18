@@ -67,10 +67,11 @@ We used VGG16 to extract features and then used Principal Component Analysis and
 
 
 # **What Python packages we used**
-- Pandas to create a dataframe with image file names and
+- [Pandas] (https://pandas.pydata.org/) to create a dataframe with image file names and corresponding metadata
 - [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) to scrape images
-- keras for image manipulation, loading pre-trained VGG16 and training CNNs
-tensorflow (should we mention tensorflow?)
+- [Keras](https://keras.io/) for image manipulation, loading pre-trained VGG16 and training CNNs
+
+(should we mention tensorflow?)
 
 
 # **What we are offering**
