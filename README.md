@@ -36,6 +36,7 @@ This was done as part of final project for the Fall 2018 class
 * [Data](#Data)
 * [Network Architecture](#Network-Architecture)
 * [What we did](#What-we-did)
+* [What Python packages we used](What-Python-packages-we-used)
 * [What we are offering](#What-we-are-offering)
 
 
@@ -67,7 +68,7 @@ We used VGG16 to extract features and then used Principal Component Analysis and
 
 
 # **What Python packages we used**
-- [Pandas] (https://pandas.pydata.org/) to create a dataframe with image file names and corresponding metadata
+- [Pandas](https://pandas.pydata.org/) to create a dataframe with image file names and corresponding metadata
 - [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) to scrape images
 - [Keras](https://keras.io/) for image manipulation, loading pre-trained VGG16 and training CNNs
 
