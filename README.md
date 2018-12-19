@@ -1,106 +1,109 @@
 # A Wikiart Classifier
 
-**Authors**: Jan Albrecht, Matteo Bellitti, [Mohit Pandey](https://github.com/mohitpandey92)
-
-Wikiart-Classifier is an open-source Python-based image classifier. It classifies artwork into different styles using Deep Neural Networks. 
-
-We have achieved 49 % accuracy on test set with a total number of 150,000 images and XXX number of labels on them. If we had randomly guessed the label of an image, then we get an accuracy of 1 %. (I have assumed number of labels is 100).
-
-The idea is to teach an NN to recognize the style, genres, and author of an artwork.
-
-This sounds ambitious, since those concepts are nebulous anyway, and unsurprisingly we do not get accuracy larger than 50% even on the training set.
+**Authors**: [Jan Albrecht](https://github.com/janpfsr), [Matteo Bellitti](https://github.com/mbellitti/), [Mohit Pandey](https://github.com/mohitpandey92)
 
 ![PCA](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/picasso_example500_PCA.png?raw=true "Title")
 _PCA of images of Picasso_
 
+Wikiart-Classifier is an open-source Python-based image classifier.
+The idea is to teach a Convolutional NN to recognize the style, genres, and author of an artwork.
 
-![tSNE](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/michelangelo_feininger_test_tSNE.png?raw=true "Title")
-_tSNE of images of Michelangelo_
+This sounds ambitious, some of those concepts are nebulous anyway, and unsurprisingly we do not get accuracy larger than 50% even on the training set.
 
-Footnote:
-In principle, we have data to run classification task on
-- Century the artwork was realized
-- Field (Painting, Sculpture, Photography)
-- Style (Cubism, Impressionism, Dadaism)
-- Author
+Still, we think there are many insights to be gained by applying Machine
+Learning techniques to this dataset. The header image is a simple application of
+PCA to Picasso's work, and clearly there is some structure: for example,
+paintings from the blue period are clustered.
+
+This is encouraging, are the similarities in painting of the same school something that's easy to recognize?
+
+This project was the final for the Fall 2018 class
+[Machine Learning for Physicists](https://physics.bu.edu/~pankajm/PY895-ML.html)
+held at Boston University.
 
 ## Dataset
+The WikiArt dataset is composed of 152k images, labeled by artist, genre, style and
+date of creation, as presented on [WikiArt](https://www.wikiart.org/).
 
-The dataset was compiled by scraping [WikiArt](https://www.wikiart.org/). The WikiArt project does not
-provide a prepackaged dataset, so we used a
+The WikiArt project does not provide a prepackaged dataset, so we used a mix of BeautifulSoup and the all-powerful `wget` to scrape the images and the metadata.
+
+Since the [terms of use](https://www.wikiart.org/en/terms-of-use) are not clear on the
+matter of redistribution, if someone is interested in the dataset they should
+contact WikiArt first.
 
 ## Task considerations
-In the end we trained most on the "style" of a painting than on any other label,
-simply because there are many "mythological paintings" and many "landscapes" but
-very few paintings by any given artist.
+In this dataset, we could run a supervised learning classification task on
+- Date the artwork was realized
+- Genre (Portrait, Landscape, Symbolic)
+- Style (Cubism, Impressionism, Dadaism)
+- Author
+but some of these are harder than the others.
 
-It turns out that the most prolific
-artist (Van Gogh, with 1927 artworks) has *way* more artworks than usual: the median is just 24 artworks. This means that if we try to recognize the author of a painting, a few labels will be extremely easy (the usual suspects: Van Gogh, Renoir, Roerich... You know him, right?) and more than half will have so few datapoints that it's unlikely we will ever figure them out.
+We trained most on the "genre" label, for two reasons:
+- It's the simplest label, with only 59 classes
+- There are many more "portraits" than works by any given artist.
+
+It turns out that the most prolific artist (Van Gogh, with 1927 artworks) has
+*way* more artworks than usual: the median is just 24 artworks. This means that
+if we try to recognize the author of a painting, a few labels will be extremely
+easy (the usual suspects: Van Gogh, Renoir, Roerich) but
+more than half will have so few datapoints that it's hopeless to learn anything about them.
 
 On the other hand there are 15 *thousand* impressionist paintings, and if
 "impressionism" is a concept even remotely well defined, we should be able to
-guess them correctly. The distribution is better here, with a median of 176
-artworks per style.
+recognize them correctly. The label distribution is better here, with a median
+of 176 artworks per style.
 
+# Libraries
+We stand on the shoulder of giants: we used the latest version of
+Keras, TensorFlow and Python 3.6.2.
 
-This was done as part of final project for the Fall 2018 class
-[Machine Learning for Physicists](https://physics.bu.edu/~pankajm/PY895-ML.html) held at Boston University.
+The metadata database is implemented as a pandas DataFrame, and processed using the `flow_from_dataframe` function. This is not in the official Keras release yet, a good tutorial can be found [here](https://medium.com/@vijayabhaskar96/tutorial-on-keras-imagedatagenerator-with-flow-from-dataframe-8bd5776e45c1).
 
+# Network Architecture
+We were on a tight time schedule, so we used transfer learning to save
+computational resources. The basis is VGG16 trained on
+[ImageNet](http://www.image-net.org/), followed by a few fully-connected layers and a soft-max classifier.
 
-# **Contents**
---------
-* [Installation](#Installation)
-* [Data](#Data)
-* [Network Architecture](#Network-Architecture)
-* [What we did](#What-we-did)
-* [What Python packages we used](What-Python-packages-we-used)
-* [What we are offering](#What-we-are-offering)
+# Training
+We trained the model on the BU [Shared Computing
+Cluster](https://www.bu.edu/tech/support/research/computing-resources/scc/),
+which has a few nodes equipped with GPUs.
 
+The training test contained 95.5k images, the valdiation set 23k.
 
-# **Installation**
-You should install latest version of Keras, Tensorflow and Python 3. After the installation is finished, you can download all the files from Github repository to your local directory.
+We used early stopping to prevent overfitting: after 16 epochs the validation
+error started growing again so we interrupted the (Adam) minimization.
 
-# **Data**
+![Training](https://github.com/mbellitti/wikiart-classifier/blob/master/src/training.png)
 
-We have XXX number of images which have XXX labels.  The source of the images and metadata is
-[WikiArt](https://www.wikiart.org/).
+# Testing
+The remaining 30k images were used as test set, and we obtained a 49% accuracy on the "style" classification task.
 
+# Misclassification
+Looking at a few misclassfied images, it's clear that the main problem is
+ambiguity: self-portraits and portraits are commonly mistaken for each other,
+but the NN recognizes it's confused by assigning roughly equal weights to the
+two possibilities.
 
-# **Task consideration**
+![A self-portrait misclassified as portrait.](https://github.com/mbellitti/wikiart-classifier/blob/master/data/portrait.png)
 
-In the end we trained most on the "style" of a painting than on any other label, simply because there are many "mythological paintings" and many "landscapes" but very few paintings by any given artist.
+For this particular example Prob(self-por.) = 0.67 and Prob(por.) = 0.72
 
-It turns out that the most prolific artist (Van Gogh, with 1927 artworks) has way more artworks than usual: the median is just 24 artworks. This means that if we try to recognize the author of a painting, a few labels will be extremely easy (the usual suspects: Van Gogh, Renoir, Roerich... You know him, right?) and more than half will have so few datapoints that it's unlikely we will ever figure them out.
+Some other artworks are even more ambiguous:
 
-On the other hand there are 15 thousand impressionist paintings, and if "impressionism" is a concept even remotely well defined, we should be able to guess them correctly. The distribution is better here, with a median of 176 artworks per style.
+![A still life](https://github.com/mbellitti/wikiart-classifier/blob/master/data/still.png)
 
+this is officially a "still life", but our model classifies it with high confidence as "abstract". Can we really blame it?
 
-# **Network Architecture**
+Overall, we think the model is performing well, and if we want to improve the misclassification errors we need to think mode deeply about the topic.
 
-We use Deep Neural Network to classify images. Specifically, our network is Convolutional Neural Network (CNN), whose first layer is a pre-trained layer (VGG16) followed by dense sets and at the end a softmax classifier.
+# Clustering
+This dataset lends itself to unsupervised learning tasks too: the header image
+was one example, and we played with t-SNE and a few other artists to see what
+features are captured by clustering.
 
+We used VGG16 for feature extraction and applied PCA and t-SNE.
 
-
-# **What we did**
-Since the WikiArt project does not provide a precompiled dataset, we built our own database by scraping from [WikiArt](https://www.wikiart.org/)  the images and the corresponding metadata (labels) we are interested in. Our strategy was based on that fact that WikiArt has a listing of all authors in alphabetical order. (Should we talk more about specific difficulties we faced while scraping metadata? )
-
-
-Once we had all the images and the corresponding metadata, we built a Pandas dataframe with columns containing filenames and corresponding metadata like genre and style.
-
-Since we didn't have great amount of data and computational powers compared to companies like Google, we built a CNN using the concept of transfer learning. We use a pre-trained neural network VGG16 as our first layer. The weights of VGG16 was trained on ImageNet, which is a collection of about one million images. These are very deep models, which generalise well to other datasets. That's why we used ImageNet as our initial layers, which helped our CNN in learning general features. The output of these layers was fed to dense layers, which helped our CNN in learning features specific to our imageset. We trained our CNN on GPUs and find that with as less as 5 epochs, our CNNs achieve the optimal accuracy.
-
-We used VGG16 to extract features and then used Principal Component Analysis and tSNE to find the clustering in images of a specific artist. (@Jan, do you want to add more here?)
-
-# **What Python packages we used**
-- [Pandas](https://pandas.pydata.org/) to create a dataframe with image file names and corresponding metadata
-- [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) to scrape images
-- [Keras](https://keras.io/) for image manipulation, loading pre-trained VGG16 and training CNNs
-
-(should we mention tensorflow?)
-
-
-# **What we are offering**
-
-- Image-scraper that works for WikiArt but can be extended for other websites too
-- A GPU trained CNN on wikiart (?)
-- Data scraped from WikiArt (?)--Probably we might get in trouble if we put Wikiart data on our github since Wikiart actually "owns" the data.
+![tSNE](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/michelangelo_feininger_test_tSNE.png?raw=true "Title")
+_tSNE of images of Michelangelo_
