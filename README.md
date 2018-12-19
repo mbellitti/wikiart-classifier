@@ -2,7 +2,7 @@
 
 **Authors**: [Jan Albrecht](https://github.com/janpfsr), [Matteo Bellitti](https://github.com/mbellitti/), [Mohit Pandey](https://github.com/mohitpandey92)
 
-![PCA](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/picasso_example500_PCA.png?raw=true "Title")
+![PCA](https://github.com/mbellitti/wikiart-classifier/blob/master/data/visualisation/picasso_example120_PCA.png)
 _PCA of images of Picasso_
 
 Wikiart-Classifier is an open-source Python-based image classifier.
@@ -99,11 +99,16 @@ this is officially a "still life", but our model classifies it with high confide
 Overall, we think the model is performing well, and if we want to improve the misclassification errors we need to think mode deeply about the topic.
 
 # Clustering
-This dataset lends itself to unsupervised learning tasks too: the header image
+This dataset lends itself to unsupervised learning tasks, too: the header image
 was one example, and we played with t-SNE and a few other artists to see what
 features are captured by clustering.
+We used the pre-prediction layer of VGG16 for feature extraction and applied PCA and t-SNE.
+Interestingly, using our trained network as a feature extractor did not only not improve the result but made them significantly worse compared to using the dense layers of VGG16. The following to pictures show PCA applied to pictures py picasso using VGG and our trained network
+![PCA with VGG16.]https://github.com/mbellitti/wikiart-classifier/blob/master/data/visualisation/vgg_picasso_300_PCA.png)
+_PCA of images of Picasso using full VGG16_
+![PCA with VGG16.]https://github.com/mbellitti/wikiart-classifier/blob/master/data/visualisation/om_picasso_300_PCA.png)
+_PCA of images of Picasso using our trained network_
 
-We used VGG16 for feature extraction and applied PCA and t-SNE.
-
-![tSNE](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/michelangelo_feininger_test_tSNE.png?raw=true "Title")
-_tSNE of images of Michelangelo_
+Although, we couldn't get the visualisation to clearly separate different authors, there is still a visible divide between the works of picasso and rubens in this case:
+![tSNE on VGG16](https://github.com/mbellitti/wikiart-classifier/blob/master/data/visualisation/vgg_picassorubens_300_ea30_tSNE.png)
+_tSNE of images of Picasso and PEter Paul Rubens_
