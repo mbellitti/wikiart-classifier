@@ -2,9 +2,9 @@
 
 **Authors**: Jan Albrecht, Matteo Bellitti, [Mohit Pandey](https://github.com/mohitpandey92)
 
-Wikiart-Classifier is an open-source Python-based image classifier. It classifies artwork into different genres (?) using Deep Neural Networks. 
+Wikiart-Classifier is an open-source Python-based image classifier. It classifies artwork into different styles using Deep Neural Networks. 
 
-We have achieved 45 % accuracy on test set with a total number of 150,000 images and XXX number of labels on them. If we had randomly guessed the label of an image, then we get an accuracy of 1 %. (I have assumed number of labels is 100).
+We have achieved 49 % accuracy on test set with a total number of 150,000 images and XXX number of labels on them. If we had randomly guessed the label of an image, then we get an accuracy of 1 %. (I have assumed number of labels is 100).
 
 Images to be added:
 - Plot of accuracy as a function of epochs.
@@ -89,5 +89,3 @@ We used VGG16 to extract features and then used Principal Component Analysis and
 - Image-scraper that works for WikiArt but can be extended for other websites too
 - A GPU trained CNN on wikiart (?)
 - Data scraped from WikiArt (?)--Probably we might get in trouble if we put Wikiart data on our github since Wikiart actually "owns" the data.
-
-
