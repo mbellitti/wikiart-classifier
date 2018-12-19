@@ -1,6 +1,6 @@
 # A Wikiart Classifier
 
-**Authors**: Jan Albrecht, Matteo Bellitti, [Mohit Pandey](https://github.com/mohitpandey92)
+**Authors**: [Jan Albrecht](https://github.com/janpfsr), [Matteo Bellitti](https://github.com/mbellitti/), [Mohit Pandey](https://github.com/mohitpandey92)
 
 ![PCA](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/picasso_example500_PCA.png?raw=true "Title")
 _PCA of images of Picasso_
