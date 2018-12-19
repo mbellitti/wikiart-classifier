@@ -39,9 +39,9 @@ In this dataset, we could run a supervised learning classification task on
 - Author
 but some of these are harder than the others.
 
-We trained most on the "style" label (59 classes), for two reasons:
-- We think it's more interesting than the genre
-- There are many "mythological paintings" than works by any given artist.
+We trained most on the "genre" label, for two reasons:
+- It's the simplest label, with only 59 classes
+- There are many more "portraits" than works by any given artist.
 
 It turns out that the most prolific artist (Van Gogh, with 1927 artworks) has
 *way* more artworks than usual: the median is just 24 artworks. This means that
@@ -70,10 +70,25 @@ We trained the model on the BU [Shared Computing
 Cluster](https://www.bu.edu/tech/support/research/computing-resources/scc/),
 which has a few nodes equipped with GPUs.
 
+The training test contained 95.5k images, the valdiation set 23k.
+
 We used early stopping to prevent overfitting: after 16 epochs the validation
 error started growing again so we interrupted the (Adam) minimization.
 
 ![Training](https://github.com/mbellitti/wikiart-classifier/blob/master/src/training.png)
+
+# Testing
+The remaining 30k images were used as test set, and we obtained a 49% accuracy on the "style" classification task.
+
+# Misclassification
+Looking at a few misclassfied images, it's clear that the main problem is
+ambiguity: self-portraits and portraits are commonly mistaken for each other,
+but the NN recognizes it's confused by assigning roughly equal weights to the
+two possibilities.
+
+
+
+
 
 # Clustering
 This dataset lends itself to unsupervised learning tasks too: the header image
