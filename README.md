@@ -91,7 +91,11 @@ For this particular example Prob(self-por.) = 0.67 and Prob(por.) = 0.72
 
 Some other artworks are even more ambiguous:
 
+![A still life](https://github.com/mbellitti/wikiart-classifier/blob/master/data/still.png)
+
 this is officially a "still life", but our model classifies it with high confidence as "abstract". Can we really blame it?
+
+Overall, we think the model is performing well, and if we want to improve the misclassification errors we need to think mode deeply about the topic.
 
 # Clustering
 This dataset lends itself to unsupervised learning tasks too: the header image
