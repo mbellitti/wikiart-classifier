@@ -52,13 +52,9 @@ docs/_build/
 
 # Large files
 *.csv
-<<<<<<< HEAD
-/data/images_large/
-/data/images_pinterestsmall/
-/src/images/
-*.zip
-=======
 *.zip
 *.h5
 /src/images/
->>>>>>> master
+/data/images/
+/data/images_large
+/data/images_pinterestsmall

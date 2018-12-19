@@ -5,6 +5,7 @@ from keras.applications.vgg16 import VGG16
 from keras.preprocessing import image
 from keras.applications.vgg16 import preprocess_input
 from keras.models import Model
+from keras.models import load_model
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -86,7 +87,7 @@ def create_visualisation(X, image_path, df_column, save_filepath,
     X[:,0] = (X[:, 0] - np.min(X[:, 0]))/(np.max(X[:, 0]) - np.min(X[:,0]))
     X[:,1] = (X[:,1] - np.min(X[:, 1]))/(np.max(X[:, 1]) - np.min(X[:,1]))
     full_image = Image.new('RGBA', (width, height))
-    print(len(df_sel))
+    # print(len(df_sel))
     for i in range(len(df_sel)):
         tile = Image.open(image_path + df_column.iloc[i] + '.jpg')
         xt = X[i,0]
@@ -112,24 +113,25 @@ if __name__ == '__main__':
     # arguments for data selection
     size = 300                              # number of visiualised images
     column = 'artistname'                   # which column to search for criterium
-    criterium = ['michelangelo', 'lyonel']  # search criterium (str or list of strs)
+    criterium = ['paul klee', 'august macke']  # search criterium (str or list of strs)
 
     # plot and save settings
-    plot_PCA = False
+    plot_PCA = True
     plot_tSNE = True
-    save_filepath = 'michelangelo_feininger_test'
-
+    path = '../data/visualisation/'
+    filename = 'vgg_mackeklee_300_ea30'
+    save_filepath = path + filename
     #  arguments and hyper parameters for PCA and t-SNE
-    PCA_components = 50        #t-SNE will be calculated using this projection
+    PCA_components = 70        #t-SNE will be calculated using this projection
     tSNE_components = 2
-    early_exaggeration = 30
-    perplexity = 10
-    learning_rate = 100
+    early_exaggeration = 35
+    perplexity = 14
+    learning_rate = 250
 
     # settings of ouput picture:
     width = 3000
     height = 2200
-    max_dim = 150                           # maximum size of displayed tiles
+    max_dim = 200                           # maximum size of displayed tiles
 
     # arguments
     image_path = "images/"
@@ -145,6 +147,8 @@ if __name__ == '__main__':
     # create feature extractor
     model = VGG16(weights='imagenet', include_top=True)
     feat_extractor = Model(inputs=model.input, outputs=model.get_layer("fc2").output)
+    #model = load_model('../data/model.h5')
+    #feat_extractor = Model(inputs = model.input, outputs = model.get_layer('dense_3').output)
 
     # create feature vectors
     fvs = []
@@ -164,7 +168,7 @@ if __name__ == '__main__':
     # plot PCA visualisation
     if plot_PCA == True:
         save_filepath_PCA = save_filepath + '_PCA.png'
-        create_visualisation(XPCA, image_path, def_sel[df_column_label], save_filepath_PCA,
+        create_visualisation(XPCA, image_path, df_sel[df_column_label], save_filepath_PCA,
                     width = 3000, height = 2200, maxdim = 150)
     # perform t-SNE
     myTSNE = TSNE(n_components = tSNE_components,
