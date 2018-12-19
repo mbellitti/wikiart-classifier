@@ -91,10 +91,6 @@ Since we didn't have great amount of data and computational powers compared to c
 
 We used VGG16 to extract features and then used Principal Component Analysis and tSNE to find the clustering in images of a specific artist. (@Jan, do you want to add more here?)
 
-
-
-The situation is less dire for the top 10 Genres, but we still risk
-
 # **What Python packages we used**
 - [Pandas](https://pandas.pydata.org/) to create a dataframe with image file names and corresponding metadata
 - [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) to scrape images
