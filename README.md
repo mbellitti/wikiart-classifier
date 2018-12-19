@@ -5,15 +5,17 @@
 ![PCA](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/picasso_example500_PCA.png?raw=true "Title")
 _PCA of images of Picasso_
 
-![tSNE](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/michelangelo_feininger_test_tSNE.png?raw=true "Title")
-_tSNE of images of Michelangelo_
-
 Wikiart-Classifier is an open-source Python-based image classifier.
 The idea is to teach a Convolutional NN to recognize the style, genres, and author of an artwork.
 
-This sounds ambitious, since those concepts are nebulous anyway, and unsurprisingly we do not get accuracy larger than 50% even on the training set.
+This sounds ambitious, some of those concepts are nebulous anyway, and unsurprisingly we do not get accuracy larger than 50% even on the training set.
 
-Still, we think there are many insights to be gained by applying Machine Learning techniques to this dataset.
+Still, we think there are many insights to be gained by applying Machine
+Learning techniques to this dataset. The header image is a simple application of
+PCA to Picasso's work, and clearly there is some structure: for example,
+paintings from the blue period are clustered.
+
+This is encouraging, are the similarities in painting of the same school something that's easy to recognize?
 
 This project was the final for the Fall 2018 class
 [Machine Learning for Physicists](https://physics.bu.edu/~pankajm/PY895-ML.html)
@@ -37,9 +39,9 @@ In this dataset, we could run a supervised learning classification task on
 - Author
 but some of these are harder than the others.
 
-We trained most on the "style" label, for two reasons:
+We trained most on the "style" label (59 classes), for two reasons:
 - We think it's more interesting than the genre
-- There are many "mythological paintings" and than works by any given artist.
+- There are many "mythological paintings" than works by any given artist.
 
 It turns out that the most prolific artist (Van Gogh, with 1927 artworks) has
 *way* more artworks than usual: the median is just 24 artworks. This means that
@@ -52,44 +54,33 @@ On the other hand there are 15 *thousand* impressionist paintings, and if
 recognize them correctly. The label distribution is better here, with a median
 of 176 artworks per style.
 
+# Libraries
+We stand on the shoulder of giants: we used the latest version of
+Keras, TensorFlow and Python 3.6.2.
 
-# **Contents**
---------
-* [Installation](#Installation)
-* [Data](#Data)
-* [Network Architecture](#Network-Architecture)
-* [What we did](#What-we-did)
-* [What Python packages we used](What-Python-packages-we-used)
-* [What we are offering](#What-we-are-offering)
+The metadata database is implemented as a pandas DataFrame, and processed using the `flow_from_dataframe` function. This is not in the official Keras release yet, a good tutorial can be found [here](https://medium.com/@vijayabhaskar96/tutorial-on-keras-imagedatagenerator-with-flow-from-dataframe-8bd5776e45c1).
 
-
-# **Installation**
-You should install latest version of Keras, Tensorflow and Python 3. After the installation is finished, you can download all the files from Github repository to your local directory.
-
-# **Data**
-
-We have XXX number of images which have XXX labels.  The source of the images and metadata is
-[WikiArt](https://www.wikiart.org/).
-
-
-# **Network Architecture**
+# Network Architecture
 We were on a tight time schedule, so we used transfer learning to save
 computational resources. The basis is VGG16 trained on
 [ImageNet](http://www.image-net.org/), followed by a few fully-connected layers and a soft-max classifier.
 
-Once we had all the images and the corresponding metadata, we built a Pandas dataframe with columns containing filenames and corresponding metadata like genre and style.
-
 # Training
-We trained the model on the BU [Shared Computing Cluster](https://www.bu.edu/tech/support/research/computing-resources/scc/), which has a few nodes equipped with GPUs.
+We trained the model on the BU [Shared Computing
+Cluster](https://www.bu.edu/tech/support/research/computing-resources/scc/),
+which has a few nodes equipped with GPUs.
 
-We used early stopping to prevent overfitting: after 16 epochs the validation error started growing again so we interrupted the (Adam) minimization.
+We used early stopping to prevent overfitting: after 16 epochs the validation
+error started growing again so we interrupted the (Adam) minimization.
 
 ![Training](https://github.com/mbellitti/wikiart-classifier/blob/master/src/training.png)
 
 # Clustering
-We used VGG16 to extract features and then used Principal Component Analysis and tSNE to find the clustering in images of a specific artist. (@Jan, do you want to add more here?)
+This dataset lends itself to unsupervised learning tasks too: the header image
+was one example, and we played with t-SNE and a few other artists to see what
+features are captured by clustering.
 
-# **What Python packages we used**
-- [Pandas](https://pandas.pydata.org/) to create a dataframe with image file names and corresponding metadata
-- [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) to scrape images
-- [Keras](https://keras.io/) for image manipulation, loading pre-trained VGG16 and training CNNs
+We used VGG16 for feature extraction and applied PCA and t-SNE.
+
+![tSNE](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/michelangelo_feininger_test_tSNE.png?raw=true "Title")
+_tSNE of images of Michelangelo_
