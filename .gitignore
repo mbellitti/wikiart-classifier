@@ -55,3 +55,6 @@ docs/_build/
 *.zip
 *.h5
 /src/images/
+/data/images/
+/data/images_large
+/data/images_pinterestsmall
