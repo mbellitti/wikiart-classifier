@@ -105,10 +105,10 @@ This dataset lends itself to unsupervised learning tasks, too: the header image
 was one example, and we played with t-SNE and a few other artists to see what
 features are captured by clustering.
 We used the pre-prediction layer of VGG16 for feature extraction and applied PCA and t-SNE.
-Interestingly, using our trained network as a feature extractor did not only not improve the result but made them significantly worse compared to using the dense layers of VGG16. The following to pictures show PCA applied to pictures py picasso using VGG and our trained network
-![PCA with VGG16.]https://github.com/mbellitti/wikiart-classifier/blob/master/data/visualisation/vgg_picasso_300_PCA.png)
+Interestingly, using our trained network as a feature extractor did not only not improve the result but made them significantly worse compared to using the dense layers of VGG16. The following to pictures show PCA applied to pictures py picasso using VGG and our trained network:
+![PCA with VGG16.](https://github.com/mbellitti/wikiart-classifier/blob/master/data/visualisation/vgg_picasso_300_PCA.png)
 _PCA of images of Picasso using full VGG16_
-![PCA with VGG16.]https://github.com/mbellitti/wikiart-classifier/blob/master/data/visualisation/om_picasso_300_PCA.png)
+![PCA with VGG16.](https://github.com/mbellitti/wikiart-classifier/blob/master/data/visualisation/om_picasso_300_PCA.png)
 _PCA of images of Picasso using our trained network_
 
 Although, we couldn't get the visualisation to clearly separate different authors, there is still a visible divide between the works of picasso and rubens in this case:
