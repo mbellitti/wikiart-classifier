@@ -5,6 +5,8 @@
 ![PCA](https://github.com/mbellitti/wikiart-classifier/blob/master/data/visualisation/picasso_example120_PCA.png)
 _PCA of images of Picasso_
 
+
+
 Wikiart-Classifier is an open-source Python-based image classifier.
 The idea is to teach a Convolutional NN to recognize the style, genres, and author of an artwork.
 
