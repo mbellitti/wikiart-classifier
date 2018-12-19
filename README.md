@@ -2,8 +2,10 @@
 
 **Authors**: [Jan Albrecht](https://github.com/janpfsr), [Matteo Bellitti](https://github.com/mbellitti/), [Mohit Pandey](https://github.com/mohitpandey92)
 
-![PCA](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/picasso_example500_PCA.png?raw=true "Title")
+![PCA](https://github.com/mbellitti/wikiart-classifier/blob/master/data/visualisation/picasso_example500_PCA.png?raw=true "Title")
 _PCA of images of Picasso_
+
+
 
 Wikiart-Classifier is an open-source Python-based image classifier.
 The idea is to teach a Convolutional NN to recognize the style, genres, and author of an artwork.
@@ -104,6 +106,6 @@ was one example, and we played with t-SNE and a few other artists to see what
 features are captured by clustering.
 
 We used VGG16 for feature extraction and applied PCA and t-SNE.
-
-![tSNE](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/michelangelo_feininger_test_tSNE.png?raw=true "Title")
+https://github.com/mbellitti/wikiart-classifier/blob/master/data/visualisation/picasso_example500_TSNE.png
+![tSNE](https://github.com/mbellitti/wikiart-classifier/blob/master/data/visualisation/michelangelo_feininger_test_tSNE.png?raw=true "Title")
 _tSNE of images of Michelangelo_
