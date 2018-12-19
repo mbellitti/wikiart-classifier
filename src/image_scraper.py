@@ -1,4 +1,4 @@
-"""A module to retrieve artworks from WikiArt and manipulate them."""
+"""A module to retrieve artworks and their meta_data from WikiArt."""
 
 import json
 import os.path
