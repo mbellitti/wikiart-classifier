@@ -10,11 +10,11 @@ Images to be added:
 - Plot of accuracy as a function of epochs.
 
 
-![PCA](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/picasso_example500_PCA.png?raw=true "Title"))
+![PCA](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/picasso_example500_PCA.png?raw=true "Title")
 _PCA of images of Picasso_
 
 
-![tSNE](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/michelangelo_feininger_test_tSNE.png?raw=true "Title"))
+![tSNE](https://github.com/mbellitti/wikiart-classifier/blob/visualisation/src/michelangelo_feininger_test_tSNE.png?raw=true "Title")
 _tSNE of images of Michelangelo_
 
 Footnote:
