@@ -10,7 +10,7 @@ _PCA of images of Picasso_
 Wikiart-Classifier is an open-source Python-based image classifier.
 The idea is to teach a Convolutional NN to recognize the style, genres, and author of an artwork.
 
-This sounds ambitious, some of those concepts are nebulous anyway, and unsurprisingly we do not get accuracy larger than 50% even on the training set.
+This sounds ambitious and some of those concepts are nebulous anyway. Unlike MNIST data, we don't expect 100 % accuracy even on training dataset because the classes are not truly "mutually exclusive".
 
 Still, we think there are many insights to be gained by applying Machine
 Learning techniques to this dataset. The header image is a simple application of
@@ -101,11 +101,9 @@ this is officially a "still life", but our model classifies it with high confide
 Overall, we think the model is performing well, and if we want to improve the misclassification errors we need to think mode deeply about the topic.
 
 # Clustering
-This dataset lends itself to unsupervised learning tasks, too: the header image
-was one example, and we played with t-SNE and a few other artists to see what
-features are captured by clustering.
-We used the pre-prediction layer of VGG16 for feature extraction and applied PCA and t-SNE.
-Interestingly, using our trained network as a feature extractor did not only not improve the result but made them significantly worse compared to using the dense layers of VGG16. The following to pictures show PCA applied to pictures by Picasso using VGG and our trained network:
+This dataset lends itself to unsupervised learning tasks, too: the header image was one example, and we played with t-SNE and a few other artists to see what features are captured by clustering. We used the pre-prediction layer of VGG16 for feature extraction and applied PCA and t-SNE. Interestingly, using our trained network as a feature extractor did not only not improve the result but made them significantly worse compared to using the dense layers of VGG16. Our guess is that our network is less sensitive to subtle differences because our number of possible classes is far smaller than in the imagenet challenge (there they have about 1000 classes).
+
+The following two pictures show PCA applied to pictures by Picasso using VGG and our trained network:
 ![PCA with VGG16.](https://github.com/mbellitti/wikiart-classifier/blob/master/data/visualisation/vgg_picasso_300_PCA.png)
 _PCA of images of Picasso using full VGG16_
 ![PCA with VGG16.](https://github.com/mbellitti/wikiart-classifier/blob/master/data/visualisation/om_picasso_300_PCA.png)
