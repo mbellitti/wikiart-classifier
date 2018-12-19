@@ -49,6 +49,15 @@ We have XXX number of images which have XXX labels.  The source of the images an
 [WikiArt](https://www.wikiart.org/).
 
 
+# **Task consideration**
+
+In the end we trained most on the "style" of a painting than on any other label, simply because there are many "mythological paintings" and many "landscapes" but very few paintings by any given artist.
+
+It turns out that the most prolific artist (Van Gogh, with 1927 artworks) has way more artworks than usual: the median is just 24 artworks. This means that if we try to recognize the author of a painting, a few labels will be extremely easy (the usual suspects: Van Gogh, Renoir, Roerich... You know him, right?) and more than half will have so few datapoints that it's unlikely we will ever figure them out.
+
+On the other hand there are 15 thousand impressionist paintings, and if "impressionism" is a concept even remotely well defined, we should be able to guess them correctly. The distribution is better here, with a median of 176 artworks per style.
+
+
 # **Network Architecture**
 
 We use Deep Neural Network to classify images. Specifically, our network is Convolutional Neural Network (CNN), whose first layer is a pre-trained layer (VGG16) followed by dense sets and at the end a softmax classifier.
