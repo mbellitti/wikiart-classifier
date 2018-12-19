@@ -86,9 +86,12 @@ ambiguity: self-portraits and portraits are commonly mistaken for each other,
 but the NN recognizes it's confused by assigning roughly equal weights to the
 two possibilities.
 
+![A self-portrait misclassified as portrait.](https://github.com/mbellitti/wikiart-classifier/blob/master/data/portrait.png)
+For this particular example Prob(self-por.) = 0.67 and Prob(por.) = 0.72
 
+Some other artworks are even more ambiguous:
 
-
+this is officially a "still life", but our model classifies it with high confidence as "abstract". Can we really blame it?
 
 # Clustering
 This dataset lends itself to unsupervised learning tasks too: the header image
